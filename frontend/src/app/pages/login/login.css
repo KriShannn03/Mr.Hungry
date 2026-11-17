@@ -1,0 +1,259 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&family=Krona+One&display=swap');
+
+:host {
+    display: block;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+.page {
+    max-width: none;
+    margin: 0 auto;
+    background: white;
+    font-family: 'Montserrat', sans-serif;
+    color: #111;
+}
+
+
+/* ---------- brand ---------- */
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 8px 40px;
+}
+
+.logo-img {
+    height: 40px;
+}
+
+.brand p {
+    margin: 0;
+    width: 100%;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 24px;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+
+/* ---------- split layout (phone: stacked) ---------- */
+
+.split {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+
+/* ---------- left: photo ---------- */
+
+.left {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 240px;
+    padding: 0 24px;
+    overflow: hidden;
+    background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.05)),
+    url('/images/hero.jpg') center / cover no-repeat;
+}
+
+.left h1 {
+    position: relative;
+    margin: 0;
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 48px;
+    line-height: 1;
+    letter-spacing: -2px;
+}
+
+.watermark {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 80px;
+    color: rgba(255, 255, 255, 0.18);
+    pointer-events: none;
+}
+
+
+/* ---------- right: green background + card ---------- */
+
+.right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+    background: #2f4a3f url('/images/bg-green.jpg') center / cover no-repeat;
+}
+
+.card {
+    width: 100%;
+    max-width: 420px;
+    padding: 24px;
+    background: #fbe9c6;
+    border-radius: 28px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+
+/* ---------- tabs ---------- */
+
+.tabs {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.tab {
+    flex: 1;
+    border: none;
+    border-radius: 14px;
+    padding: 10px 0;
+    background: white;
+    color: #111;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+.tab.active {
+    background: #1e7a34;
+}
+
+
+/* ---------- form ---------- */
+
+label {
+    display: block;
+    margin: 8px 0 4px;
+    font-family: 'Krona One', sans-serif;
+    font-size: 13px;
+}
+
+.field {
+    width: 100%;
+    height: 40px;
+    border: 1px solid #111;
+    border-radius: 12px;
+    padding: 0 12px;
+    background: white;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+}
+
+.forgot {
+    display: inline-block;
+    margin: 8px 0 12px;
+    color: #111;
+    text-decoration: none;
+    font-family: 'Krona One', sans-serif;
+    font-size: 11px;
+}
+
+.forgot:hover {
+    text-decoration: underline;
+}
+
+.error {
+    margin: 0 0 10px;
+    color: #b3261e;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.main-btn {
+    width: 100%;
+    border: none;
+    border-radius: 14px;
+    padding: 14px 0;
+    background: white;
+    color: #111;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.main-btn:hover {
+    background: #fff0e8;
+}
+
+.or {
+    margin: 8px 0;
+    text-align: center;
+    font-family: 'Krona One', sans-serif;
+    font-size: 13px;
+}
+
+.guest-btn {
+    width: 100%;
+    border: none;
+    border-radius: 14px;
+    padding: 14px 0;
+    background: #111;
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.guest-btn:hover {
+    background: #333;
+}
+
+
+/* ---------- tablet and desktop (768px and wider): photo on the left, card on the right ---------- */
+
+@media (min-width: 768px) {
+
+    .split {
+        grid-template-columns: 1fr 1fr;
+        min-height: calc(100vh - 56px);
+    }
+
+    .left {
+        min-height: 0;
+        padding: 0 48px;
+    }
+
+    .left h1 {
+        font-size: 80px;
+    }
+
+    .watermark {
+        font-size: 160px;
+    }
+
+    .right {
+        padding: 48px;
+    }
+}
+
+@media (min-width: 1200px) {
+
+    .left h1 {
+        font-size: 104px;
+    }
+
+    .watermark {
+        font-size: 220px;
+    }
+}

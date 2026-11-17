@@ -1,0 +1,581 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&family=Krona+One&display=swap');
+
+:host {
+    display: block;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+.page {
+    max-width: none;
+    margin: 0 auto;
+    background: white;
+    font-family: 'Montserrat', sans-serif;
+    color: #111;
+}
+
+
+/* ---------- brand ---------- */
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 8px 40px;
+}
+
+.logo-img {
+    height: 40px;
+}
+
+.brand p {
+    margin: 0;
+    width: 100%;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 24px;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+
+/* ---------- orange bar ---------- */
+
+.orange-bar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    background-color: #e8650c;
+    padding: 8px 40px;
+    box-shadow:
+    0 0 0px #e8640cb6,
+    0 0 25px #e8640cb6;
+}
+
+.menu-btn {
+    display: flex;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: white;
+    padding: 0px;
+    font-size: 50px;
+    align-items: center;
+    text-shadow:
+    0 0 5px #ffffff,
+    0 0 10px #ffffff,
+    0 0 20px #e8650c,
+    0 0 30px #e8650c,
+    0 0 55px #e8650c,
+    0 0 75px #e8650c;
+}
+
+.search {
+    flex: 1;
+    min-width: 0;
+    max-width: 720px;
+    margin: 0 auto;
+    border: none;
+    border-radius: 999px;
+    padding: 10px 18px;
+    background: #fff0e8;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+}
+
+.profile-btn {
+    position: relative;
+}
+
+.profile {
+    border: none;
+    border-radius: 999px;
+    padding: 8px 14px;
+    background: #ffd9c4;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 12px;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.profile-card {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 8px;
+    min-width: 180px;
+    padding: 12px 14px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+    font-size: 13px;
+}
+
+.profile-card p {
+    margin: 2px 0;
+}
+
+.p-name {
+    font-weight: 800;
+}
+
+.cart-btn {
+    position: relative;
+}
+
+.cart {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: white;
+    padding: 0px;
+    font-size: 26px;
+}
+
+.badge {
+    position: absolute;
+    top: -4px;
+    right: -8px;
+    background: #111;
+    color: white;
+    border-radius: 999px;
+    font-size: 11px;
+    padding: 1px 6px;
+}
+
+.cart-card {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 8px;
+    min-width: 180px;
+    padding: 12px 14px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+    font-size: 13px;
+}
+
+.cart-card p {
+    margin: 2px 0;
+}
+
+.pop-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 4px 0;
+}
+
+.pop-total {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px dashed #111;
+    font-weight: 800;
+}
+
+.pop-btn {
+    display: block;
+    width: 100%;
+    margin-top: 8px;
+    border: none;
+    border-radius: 999px;
+    padding: 9px 0;
+    background: #111;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+
+/* ---------- black nav bar ---------- */
+
+.nav {
+    display: none;
+    align-items: center;
+    justify-content: space-around;
+    background: #111;
+    padding: 14px 40px;
+}
+
+.nav.open {
+    display: flex;
+}
+
+.nav a {
+    color: white;
+    text-decoration: none;
+    font-family: 'Krona One', sans-serif;
+    font-size: 12px;
+    text-shadow:
+    0 0 6px #ffffff,
+    0 0 14px #ffffff;
+}
+
+.nav a:hover {
+    color: #e8650c;
+}
+
+.nav .register {
+    background: #1e7a34;
+    color: #111;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 11px;
+    text-transform: uppercase;
+    text-shadow: none;
+    padding: 6px 16px;
+    border-radius: 999px;
+}
+
+
+/* ---------- page 1: hero ---------- */
+
+.hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: calc(100vh - 150px);
+    padding: 0 40px;
+    overflow: hidden;
+    background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.05)),
+    url('/images/hero.jpg') center / cover no-repeat;
+}
+
+.hero h1 {
+    position: relative;
+    margin-left: 250px;
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 56px;
+    line-height: 1;
+    letter-spacing: -2px;
+}
+
+.watermark {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 90px;
+    color: rgba(255, 255, 255, 0.18);
+    pointer-events: none;
+}
+
+
+/* ---------- page 2: best sellers + must try ---------- */
+
+.foods {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 72px 16px 32px;
+    background: #2f4a3f url('/images/bg-green.jpg') center / cover no-repeat;
+}
+
+.foods h2 {
+    margin: 12px 0;
+    text-align: center;
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 26px;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+.note {
+    margin: 0 0 8px;
+    text-align: center;
+    color: white;
+    font-weight: 600;
+}
+
+.error {
+    color: #ffb4a8;
+}
+
+.food-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto 18px;
+}
+
+.card {
+    background: #fbe9c6;
+    padding: 6px;
+    border-radius: 10px;
+    box-shadow: 3px 4px 0 rgba(0, 0, 0, 0.5);
+}
+
+.card img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 8px;
+    background: #3a2a1a;
+}
+
+.card .initial {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 3;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #e8650c, #b5471f);
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 36px;
+}
+
+.card .name {
+    margin: 6px 0 0;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.card .price {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 800;
+    color: #e8650c;
+}
+
+.add-btn {
+    width: 100%;
+    margin-top: 6px;
+    border: none;
+    border-radius: 999px;
+    padding: 6px 0;
+    background: #35c238;
+    color: #111;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.stepper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 6px;
+    padding: 3px 0;
+    border-radius: 999px;
+    background: #35c238;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.stepper button {
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: 50%;
+    background: #111;
+    color: white;
+    cursor: pointer;
+}
+
+
+/* ---------- page 3: how to order ---------- */
+
+.how {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 83px);
+    background: #fbe9c6 url('/images/bg-cream.jpg') center / cover no-repeat;
+}
+
+.how-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 48px 16px;
+}
+
+.how h2 {
+    margin: 0 0 32px;
+    text-align: center;
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 48px;
+    text-shadow: 2px 2px 0 #111;
+}
+
+.how ol {
+    list-style: none;
+    display: grid;
+    gap: 20px;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+.how li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.num {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #e8650c;
+    color: #111;
+    font-weight: 800;
+}
+
+.how h3 {
+    margin: 0 0 2px;
+    font-size: 15px;
+}
+
+.how p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+
+/* ---------- footer ---------- */
+
+.footer {
+    background: #111;
+    color: white;
+    padding: 18px 40px;
+    font-size: 13px;
+}
+
+.footer p {
+    margin: 4px 0;
+}
+
+
+/* ---------- tablet and desktop ---------- */
+
+@media (min-width: 768px) {
+
+    .nav {
+        justify-content: space-evenly;
+    }
+
+    .nav a {
+        font-size: 14px;
+    }
+
+    .nav .register {
+        font-size: 13px;
+        padding: 8px 22px;
+    }
+
+    .profile {
+        font-size: 13px;
+        padding: 10px 16px;
+    }
+
+    .hero {
+        padding: 0 60px;
+    }
+
+    .hero h1 {
+        font-size: 96px;
+    }
+
+    .watermark {
+        font-size: 220px;
+    }
+
+    .foods h2 {
+        font-size: 36px;
+        margin: 20px 0;
+    }
+
+    .grid {
+        gap: 22px;
+        margin-bottom: 32px;
+    }
+
+    .card {
+        padding: 10px;
+        border-radius: 14px;
+    }
+
+    .card .initial {
+        font-size: 56px;
+    }
+
+    .card .name {
+        font-size: 16px;
+    }
+
+    .card .price {
+        font-size: 18px;
+    }
+
+    .add-btn {
+        padding: 9px 0;
+        font-size: 15px;
+    }
+
+    .stepper {
+        padding: 5px 0;
+        font-size: 15px;
+    }
+
+    .how ol {
+        grid-template-columns: 1fr 1fr;
+        gap: 28px 40px;
+    }
+
+    .how h3 {
+        font-size: 18px;
+    }
+
+    .how p {
+        font-size: 15px;
+    }
+
+    .num {
+        width: 42px;
+        height: 42px;
+        font-size: 18px;
+    }
+
+    .footer {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        font-size: 14px;
+    }
+}

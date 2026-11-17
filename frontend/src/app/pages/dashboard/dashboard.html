@@ -1,13 +1,179 @@
-<div class="page">
+﻿<div class="page">
 
   <header class="brand">
-    <img src="/logo.png" alt="Mr Hungry logo" class="logo-img">
+    <img class="logo-img" src="/logo.png" alt="Mr. Hungry logo" />
+    <p>Mr. Hungry</p>
   </header>
 
-<div class="orange-bar">
-  <button class="menu-btn" (click)="toggleMenu()">☰</button>
-  <input type="text" class="search" placeholder="Type here">
-  <button class = "user-name"></button>
+  <!-- top bar -->
+    <div class="orange-bar">
+    <button class="menu-btn" (click)="toggleMenu()" [attr.aria-expanded]="menuOpen()" aria-label="Toggle menu">☰</button>
+    <input type="text" class="search" placeholder="Search the menu" aria-label="Search the menu"
+           [value]="search()" (input)="onSearch($event)" (keydown.enter)="goSearch()" />
 
-  <button class="cart">🛒</button>
+    <div class="profile-btn">
+      <button class="profile" (click)="toggleProfile()" aria-label="Profile">👤 {{ user()?.name ?? 'Guest' }}</button>
+      @if (profileOpen()) {
+        <div class="profile-card">
+          @if (user(); as u) {
+            <p class="p-name">{{ u.name }}</p>
+            <p>{{ u.email }}</p>
+            <p>{{ u.points }} points</p>
+            <button type="button" class="pop-btn" (click)="logout()">Log out</button>
+          } @else {
+            <p class="p-name">Guest</p>
+            <p>You are ordering as a guest. Register to earn points.</p>
+            <a class="pop-btn" routerLink="/login">Login or Register</a>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="cart-btn">
+      <button class="cart" (click)="toggleCart()" aria-label="Open cart">🛒</button>
+      @if (cartCount() > 0) {
+        <span class="badge">{{ cartCount() }}</span>
+      }
+      @if (cartOpen()) {
+        <div class="cart-card">
+          @for (line of cart.lines(); track line.item.item_id) {
+            <div class="pop-row">
+              <span>{{ line.qty }} x {{ line.item.name }}</span>
+              <span>₱{{ line.item.price * line.qty }}</span>
+            </div>
+          } @empty {
+            <p>Your cart is empty.</p>
+          }
+
+          @if (cartCount() > 0) {
+            <div class="pop-row pop-total">
+              <span>Subtotal</span>
+              <span>₱{{ cart.subtotal() }}</span>
+            </div>
+            <a class="pop-btn" routerLink="/order" (click)="closeAll()">View order</a>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- nav -->
+    <nav class="nav" [class.open]="menuOpen()">
+    <a routerLink="/menu">Menu</a>
+    <a routerLink="/order">Order</a>
+    <a routerLink="/rewards">Rewards</a>
+    <a routerLink="/history">History</a>
+    @if (!isLoggedIn()) {
+      <a routerLink="/login" class="register">Register</a>
+    }
+  </nav>
+
+  <!-- hero -->
+  <section class="hero">
+    <span class="watermark" aria-hidden="true">MR HUNGRY</span>
+    <h1>Satisfy<br />Every<br />Craving</h1>
+  </section>
+
+ <!-- food sections -->
+<section class="foods">
+
+  <h2>Best Sellers</h2>
+  <div class="food-grid">
+    @if (loading() || error()) {
+      @for (n of [1, 2, 3]; track n) {
+        <div class="card">
+          <div class="skeleton-img"></div>
+          <p class="name placeholder">.....</p>
+          <p class="price placeholder">₱.....</p>
+          <div class="btn-space"></div>
+        </div>
+      }
+    } @else {
+      @for (item of bestSellers(); track item.item_id) {
+        <div class="card">
+          @if (item.image_url) {
+            <img [src]="item.image_url" [alt]="item.name">
+          } @else {
+            <div class="initial">{{ item.name[0] }}</div>
+          }
+          <p class="name">{{ item.name }}</p>
+          <p class="price">₱{{ item.price }}</p>
+
+          @if (quantityOf(item.item_id) === 0) {
+            <button type="button" class="add-btn" (click)="addItem(item)">Add</button>
+          } @else {
+            <div class="stepper">
+              <button type="button" (click)="removeItem(item)">−</button>
+              <b>{{ quantityOf(item.item_id) }}</b>
+              <button type="button" (click)="addItem(item)">+</button>
+            </div>
+          }
+        </div>
+      }
+    }
+  </div>
+
+  <h2>Must Try</h2>
+  <div class="food-grid">
+    @if (loading() || error()) {
+      @for (n of [1, 2, 3]; track n) {
+        <div class="card">
+          <div class="skeleton-img"></div>
+          <p class="name placeholder">.....</p>
+          <p class="price placeholder">₱.....</p>
+          <div class="btn-space"></div>
+        </div>
+      }
+    } @else {
+      @for (item of mustTry(); track item.item_id) {
+        <div class="card">
+          @if (item.image_url) {
+            <img [src]="item.image_url" [alt]="item.name">
+          } @else {
+            <div class="initial">{{ item.name[0] }}</div>
+          }
+          <p class="name">{{ item.name }}</p>
+          <p class="price">₱{{ item.price }}</p>
+
+          @if (quantityOf(item.item_id) === 0) {
+            <button type="button" class="add-btn" (click)="addItem(item)">Add</button>
+          } @else {
+            <div class="stepper">
+              <button type="button" (click)="removeItem(item)">−</button>
+              <b>{{ quantityOf(item.item_id) }}</b>
+              <button type="button" (click)="addItem(item)">+</button>
+            </div>
+          }
+        </div>
+      }
+    }
+  </div>
+</section>
+
+  <!-- how to order -->
+  <section class="how">
+   <div class="how-body">
+    <h2>How To Order</h2>
+    <ol>
+      @for (step of steps; track step.title) {
+        <li>
+          <span class="num">{{ $index + 1 }}</span>
+          <div>
+            <h3>{{ step.title }}</h3>
+            <p>{{ step.text }}</p>
+          </div>
+        </li>
+      }
+    </ol>
+   </div>
+
+        <footer class="footer">
+      <p>Facebook: {{ contact.facebook }}</p>
+      <p>Email: {{ contact.email }}</p>
+      <p>Address: {{ contact.address }}</p>
+      <p>Phone: {{ contact.phone }}</p>
+    </footer>
+
+  </section>di
 </div>
+

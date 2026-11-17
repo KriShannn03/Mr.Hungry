@@ -7,7 +7,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "mr-hunger": {
+    "mr-hungry": {
       "projectType": "application",
       "schematics": {},
       "root": "",

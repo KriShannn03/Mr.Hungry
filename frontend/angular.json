@@ -57,10 +57,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "mr-hunger:build:production"
+              "buildTarget": "mr-hungry:build:production"
             },
             "development": {
-              "buildTarget": "mr-hunger:build:development"
+              "buildTarget": "mr-hungry:build:development"
             }
           },
           "defaultConfiguration": "development"

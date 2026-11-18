@@ -579,3 +579,115 @@
         font-size: 14px;
     }
 }
+
+/* ---------- phones (767px and narrower) ---------- */
+
+@media (max-width: 767px) {
+
+    :host {
+        overflow-x: hidden;
+    }
+
+    /* brand */
+    .brand {
+        padding: 8px 16px;
+        gap: 10px;
+    }
+
+    .brand p {
+        font-size: 20px;
+    }
+
+    /* orange bar: less spacing so the search box fits */
+    .orange-bar {
+        gap: 10px;
+        padding: 8px 12px;
+    }
+
+    .menu-btn {
+        font-size: 34px;
+    }
+
+    .search {
+        flex: 1;
+        min-width: 0;
+        max-width: none;
+        margin: 0;
+        padding: 9px 12px;
+        font-size: 13px;
+    }
+
+    .profile {
+        max-width: 110px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    .cart {
+        font-size: 24px;
+    }
+
+    .profile-card,
+    .cart-card {
+        min-width: 200px;
+        max-width: calc(100vw - 24px);
+    }
+
+    /* black nav bar: stack the links so they don't touch each other */
+    .nav.open {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 6px 0;
+    }
+
+    .nav a {
+        padding: 12px 20px;
+        font-size: 13px;
+    }
+
+    .nav .register {
+        margin: 8px 20px 10px;
+        padding: 10px 16px;
+        text-align: center;
+        font-size: 12px;
+    }
+
+    /* hero: smaller text that fits the screen */
+    .hero {
+        justify-content: flex-start;
+        min-height: 70vh;
+        padding: 0 20px;
+    }
+
+    .hero h1 {
+        z-index: 1;
+        font-size: clamp(40px, 13vw, 64px);
+    }
+
+    .watermark {
+        padding: 0 8px;
+        text-align: center;
+        line-height: 0.9;
+        font-size: 18vw;
+    }
+
+    /* food and how-to sections */
+    .foods {
+        padding: 40px 12px 24px;
+    }
+
+    .how-body {
+        padding: 40px 16px 24px;
+    }
+
+    .how h2 {
+        font-size: 32px;
+    }
+
+    .footer {
+        padding: 18px 20px;
+    }
+}

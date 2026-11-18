@@ -1,0 +1,164 @@
+﻿<div class="page">
+
+  <!-- brand -->
+  <header class="brand">
+    <img class="logo-img" src="/logo.png" alt="Mr. Hungry logo">
+    <p>Mr.Hungry</p>
+  </header>
+
+  <!-- orange bar -->
+  <div class="orange-bar">
+    <button type="button" class="menu-btn" (click)="toggleMenu()"
+            [attr.aria-expanded]="menuOpen()" aria-label="Toggle menu">&#9776;</button>
+
+    <input type="text" class="search" placeholder="Type here" aria-label="Search the menu"
+           [value]="search()" (input)="onSearch($event)">
+
+    <div class="profile-wrap">
+      <button type="button" class="profile" (click)="toggleProfile()" aria-label="Profile">
+        &#128100; {{ auth.user()?.name ?? 'Guest' }}
+      </button>
+
+      @if (profileOpen()) {
+        <div class="popover">
+          @if (auth.user(); as user) {
+            <p class="p-name">{{ user.name }}</p>
+            <p>{{ user.email }}</p>
+            <p>{{ user.points }} points</p>
+            <button type="button" class="pop-btn" (click)="logout()">Log out</button>
+          } @else {
+            <p>You are ordering as a guest. Register to earn points.</p>
+            <a class="pop-btn" routerLink="/login">Login or Register</a>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="cart-wrap">
+      <button type="button" class="cart" (click)="toggleCart()"
+              [attr.aria-label]="'Open cart, ' + cart.count() + ' items'">
+        {{ cart.count() }} &#128722;
+      </button>
+
+      @if (cartOpen()) {
+        <div class="popover">
+          @for (line of cart.lines(); track line.item.item_id) {
+            <div class="pop-row">
+              <span>{{ line.qty }} x {{ line.item.name }}</span>
+              <span>&#8369;{{ line.item.price * line.qty }}</span>
+            </div>
+          } @empty {
+            <p>Your cart is empty.</p>
+          }
+
+          @if (cart.count() > 0) {
+            <div class="pop-row pop-total">
+              <span>Subtotal</span>
+              <span>&#8369;{{ cart.subtotal() }}</span>
+            </div>
+            <a class="pop-btn" routerLink="/order">View order</a>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- black menu bar -->
+  <nav class="nav">
+    <span class="nav-title"><span class="play">&#9654;</span> Menu</span>
+    <button type="button" class="nav-close" (click)="toggleMenu()" aria-label="Toggle links">&#10005;</button>
+  </nav>
+
+  @if (menuOpen()) {
+    <div class="nav-links">
+      <a routerLink="/">Home</a>
+      <a routerLink="/menu">Menu</a>
+      <a routerLink="/order">Order</a>
+      <a routerLink="/rewards">Rewards</a>
+      <a routerLink="/history">History</a>
+    </div>
+  }
+
+  <!-- categories -->
+  <section class="categories">
+    <h1>Categories</h1>
+
+    <div class="chips" role="group" aria-label="Categories">
+      @for (category of categories(); track category) {
+        <button type="button" class="chip"
+                [class.active]="!search() && category === activeCategory()"
+                [attr.aria-pressed]="!search() && category === activeCategory()"
+                (click)="selectCategory(category)">{{ category }}</button>
+      }
+    </div>
+
+    @if (search()) {
+      <p class="note">Results for &quot;{{ search() }}&quot; in all categories</p>
+    }
+  </section>
+
+  <!-- products -->
+  <section class="products">
+    <div class="grid">
+      @if (loading()) {
+        @for (n of [1, 2, 3, 4, 5, 6]; track n) {
+          <article class="product">
+            <div class="photo"><div class="skeleton-img"></div></div>
+            <div class="info">
+              <div>
+                <p class="name placeholder">PRODUCT NAME</p>
+                <p class="price placeholder">PRICE</p>
+              </div>
+            </div>
+          </article>
+        }
+      } @else {
+        @for (item of visibleItems(); track item.item_id) {
+          <article class="product">
+            <div class="photo">
+              @if (item.image_url) {
+                <img [src]="item.image_url" [alt]="item.name">
+              } @else {
+                <div class="initial">{{ item.name[0] }}</div>
+              }
+              @if (item.is_best_seller) {
+                <span class="tag">Best seller</span>
+              }
+            </div>
+
+            <div class="info">
+              <div>
+                <p class="name">{{ item.name }}</p>
+                <p class="price">&#8369;{{ item.price }}</p>
+              </div>
+
+              @if (quantityOf(item.item_id) === 0) {
+                <button type="button" class="add-btn" (click)="addItem(item)"
+                        [attr.aria-label]="'Add ' + item.name + ' to order'">Add</button>
+              } @else {
+                <div class="stepper">
+                  <button type="button" (click)="removeItem(item)"
+                          [attr.aria-label]="'Remove one ' + item.name">&minus;</button>
+                  <b>{{ quantityOf(item.item_id) }}</b>
+                  <button type="button" (click)="addItem(item)"
+                          [attr.aria-label]="'Add one more ' + item.name">+</button>
+                </div>
+              }
+            </div>
+          </article>
+        } @empty {
+          <p class="note full">No items match. Try another category or search.</p>
+        }
+      }
+    </div>
+  </section>
+
+  <!-- bottom cart bar -->
+  @if (cart.count() > 0) {
+    <div class="cart-bar">
+      <span><b>{{ cart.count() }}</b> item{{ cart.count() === 1 ? '' : 's' }} &middot; <b>&#8369;{{ cart.subtotal() }}</b></span>
+      <a class="view-btn" routerLink="/order">View order</a>
+    </div>
+  }
+
+</div>

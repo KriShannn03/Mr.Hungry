@@ -521,7 +521,7 @@
         margin: 20px 0;
     }
 
-    .grid {
+    .food-grid {
         gap: 22px;
         margin-bottom: 32px;
     }
@@ -580,12 +580,14 @@
     }
 }
 
+
 /* ---------- phones (767px and narrower) ---------- */
 
 @media (max-width: 767px) {
 
+    /* "clip" stops sideways scrolling without breaking the sticky orange bar */
     :host {
-        overflow-x: hidden;
+        overflow-x: clip;
     }
 
     /* brand */
@@ -664,6 +666,7 @@
 
     .hero h1 {
         z-index: 1;
+        margin-left: 0;
         font-size: clamp(40px, 13vw, 64px);
     }
 

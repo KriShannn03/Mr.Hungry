@@ -2,14 +2,16 @@
 
   <!-- brand -->
   <header class="brand">
+  <a class="brand-link" routerLink="/">
     <img class="logo-img" src="/logo.png" alt="Mr. Hungry logo">
-    <p>Mr.Hungry</p>
-  </header>
+    <p>Mr. Hungry</p>
+  </a>
+</header>
 
   <!-- orange bar -->
   <div class="orange-bar">
-    <button type="button" class="menu-btn" (click)="toggleMenu()"
-            [attr.aria-expanded]="menuOpen()" aria-label="Toggle menu">&#9776;</button>
+    <button type="button" class="menu-btn" (click)="toggleNav()"
+            [attr.aria-expanded]="navOpen()" aria-label="Toggle menu">&#9776;</button>
 
     <input type="text" class="search" placeholder="Type here" aria-label="Search the menu"
            [value]="search()" (input)="onSearch($event)">
@@ -56,28 +58,35 @@
               <span>Subtotal</span>
               <span>&#8369;{{ cart.subtotal() }}</span>
             </div>
-            <a class="pop-btn" routerLink="/order">View order</a>
+            <a class="pop-btn" routerLink="/order">Check out</a>
           }
         </div>
       }
     </div>
   </div>
 
-  <!-- black menu bar -->
-  <nav class="nav">
-    <span class="nav-title"><span class="play">&#9654;</span> Menu</span>
-    <button type="button" class="nav-close" (click)="toggleMenu()" aria-label="Toggle links">&#10005;</button>
-  </nav>
+  <!-- black bar -->
+  <nav class="nav" [class.expanded]="navOpen()">
+    <div class="nav-items">
+      @for (link of links; track link.path) {
+        <button type="button" class="nav-item"
+                [class.hidden]="!navOpen() && link.path !== selected()"
+                (click)="pick(link.path)">
+          @if (!navOpen() && link.path === selected()) {
+            <span class="play">&#9654;</span>
+          }
+          {{ link.label }}
+        </button>
+      }
 
-  @if (menuOpen()) {
-    <div class="nav-links">
-      <a routerLink="/">Home</a>
-      <a routerLink="/menu">Menu</a>
-      <a routerLink="/order">Order</a>
-      <a routerLink="/rewards">Rewards</a>
-      <a routerLink="/history">History</a>
+      @if (!auth.isLoggedIn()) {
+        <a class="nav-register" routerLink="/login" [class.hidden]="!navOpen()">REGISTER</a>
+      }
     </div>
-  }
+
+    <button type="button" class="nav-close" [class.invisible]="navOpen()"
+            (click)="expandNav()" aria-label="Show all links">&#10005;</button>
+  </nav>
 
   <!-- categories -->
   <section class="categories">
@@ -157,7 +166,7 @@
   @if (cart.count() > 0) {
     <div class="cart-bar">
       <span><b>{{ cart.count() }}</b> item{{ cart.count() === 1 ? '' : 's' }} &middot; <b>&#8369;{{ cart.subtotal() }}</b></span>
-      <a class="view-btn" routerLink="/order">View order</a>
+      <a class="view-btn" routerLink="/order">Check out</a>
     </div>
   }
 

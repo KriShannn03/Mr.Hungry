@@ -1,10 +1,9 @@
 ﻿import { Component, computed, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService, CartService, MenuService } from '../../services';
 import { MenuItem } from '../../models';
 
-// Temporary sample food, shown only when the back end can't be reached.
-// Delete this block once /api/menu works.
+
 const SAMPLE_CATEGORIES: Record<string, [string, number][]> = {
   'Pasta': [['Carbonara', 149], ['Spaghetti', 129], ['Baked Mac', 139]],
   'Chicken Wings': [['Buffalo Wings', 189], ['Garlic Parmesan Wings', 199]],
@@ -36,11 +35,36 @@ export class Menu {
   auth = inject(AuthService);
   cart = inject(CartService);
   private menuService = inject(MenuService);
+  private router = inject(Router);
 
-  menuOpen = signal(false);
   profileOpen = signal(false);
   cartOpen = signal(false);
 
+  // ---------- black bar ----------
+  links = [
+  { label: 'Home', path: '/' },      
+  { label: 'Menu', path: '/menu' },
+  { label: 'Order', path: '/order' },
+  { label: 'Rewards', path: '/rewards' },
+  { label: 'History', path: '/history' },
+];
+
+  navOpen = signal(false);      
+  selected = signal('/menu');   
+
+  toggleNav() { this.navOpen.update(v => !v); }
+  expandNav() { this.navOpen.set(true); }
+
+  pick(path: string) {
+    this.selected.set(path);
+    this.navOpen.set(false);    // the others slide away
+
+    if (path !== '/menu') {
+      setTimeout(() => this.router.navigate([path]), 450);
+    }
+  }
+
+  // ---------- menu data ----------
   items = signal<MenuItem[]>([]);
   loading = signal(true);
   search = this.menuService.search;
@@ -69,7 +93,7 @@ export class Menu {
     this.loading.set(false);
   }
 
-  toggleMenu() { this.menuOpen.update(v => !v); }
+  // ---------- top bar ----------
   toggleProfile() { this.profileOpen.update(v => !v); this.cartOpen.set(false); }
   toggleCart() { this.cartOpen.update(v => !v); this.profileOpen.set(false); }
 
@@ -78,6 +102,7 @@ export class Menu {
     this.profileOpen.set(false);
   }
 
+  // ---------- search and cart ----------
   onSearch(event: Event) {
     this.search.set((event.target as HTMLInputElement).value);
   }

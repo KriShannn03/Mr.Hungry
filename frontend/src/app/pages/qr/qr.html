@@ -1,0 +1,139 @@
+<div class="page">
+
+  <!-- ================= LOGO / BRAND ================= -->
+  <header class="brand">
+    <img class="logo-img" src="/logo.png" alt="Mr. Hungry logo" />
+    <p>Mr.Hungry</p>
+  </header>
+
+
+  <!-- ================= TOP BAR ================= -->
+  <div class="orange-bar">
+    <a class="menu-btn" routerLink="/menu" aria-label="Back to the menu">☰</a>
+
+    <div class="spacer"></div>
+
+    <div class="profile-btn">
+      <button class="profile" (click)="toggleProfile()" aria-label="Profile">👤 {{ user()?.name ?? 'Guest' }}</button>
+      @if (profileOpen()) {
+        <div class="profile-card">
+          @if (user(); as u) {
+            <p class="p-name">{{ u.name }}</p>
+            <p>{{ u.email }}</p>
+            <p>{{ u.points }} points</p>
+            <button type="button" class="pop-btn" (click)="logout()">Log out</button>
+          } @else {
+            <p class="p-name">Guest</p>
+            <p>You are ordering as a guest. Register to earn points.</p>
+            <a class="pop-btn" routerLink="/login">Login or Register</a>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="cart-btn">
+      <button class="cart" (click)="toggleCart()" aria-label="Open cart">🛒</button>
+      @if (cartCount() > 0) {
+        <span class="badge">{{ cartCount() }}</span>
+      }
+      @if (cartOpen()) {
+        <div class="cart-card">
+          @for (line of cart.lines(); track line.item.item_id) {
+            <div class="pop-row">
+              <span>{{ line.qty }} x {{ line.item.name }}</span>
+              <span>₱{{ line.item.price * line.qty }}</span>
+            </div>
+          } @empty {
+            <p>Your cart is empty.</p>
+          }
+
+          @if (cartCount() > 0) {
+            <div class="pop-row pop-total">
+              <span>Subtotal</span>
+              <span>₱{{ cart.subtotal() }}</span>
+            </div>
+            <a class="pop-btn" routerLink="/order" (click)="closeAll()">View order</a>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+
+  <!-- ================= NAV BAR ================= -->
+  <nav class="nav-bar">
+    <span class="nav-title"><span class="play">▶</span> Order</span>
+    <button type="button" class="nav-close" (click)="closePage()" aria-label="Close and go to the menu">✕</button>
+  </nav>
+
+
+  <!-- ================= QR CODE ================= -->
+  <section class="qr-section">
+
+    @if (order(); as o) {
+
+      <div class="qr-card" [class.dim]="expired()">
+        @if (qrImage()) {
+          <img [src]="qrImage()" [alt]="'QR code for order ' + o.order_number" width="360" height="360" />
+        }
+      </div>
+
+      <div class="details">
+        <h1>Show this at<br />the counter</h1>
+
+        <div class="status-row">
+          <span class="order-no">Order #{{ o.order_number }}</span>
+
+          <span class="pill" [class.done]="statusLabel() === 'Completed'"
+                [class.off]="statusLabel() === 'Expired' || statusLabel() === 'Cancelled'">{{ statusLabel() }}</span>
+
+          @if (o.status === 'pending') {
+            <span class="pill light">{{ expired() ? 'Time is up' : 'Expires in ' + countdown() }}</span>
+          }
+        </div>
+
+        @if (expired() && o.status === 'pending') {
+          <p class="info error">This QR code has expired. Please place a new order.</p>
+        } @else {
+          <p class="info">
+            The kiosk scans this code, you pay at the counter, and the order is marked Completed.
+            The code works once and expires after 30 minutes.
+          </p>
+        }
+
+        <div class="summary">
+          <p class="summary-title">Order Summary</p>
+
+          @for (line of o.lines; track line.name) {
+            <div class="summary-row">
+              <span>{{ line.qty }} x {{ line.name }}</span>
+              <span>₱{{ line.qty * line.price }}</span>
+            </div>
+          }
+
+          <div class="summary-row summary-total">
+            <span>Total at Counter</span>
+            <span>₱{{ o.total }}</span>
+          </div>
+
+          @if (user()) {
+            <p class="points">+{{ o.points_earned }} points after you pay</p>
+          } @else {
+            <p class="points">Guest order: no points are earned.</p>
+          }
+        </div>
+
+        <div class="actions">
+          <a class="view-btn" routerLink="/history">View Order</a>
+
+          @if (expired() && o.status === 'pending') {
+            <a class="again-btn" routerLink="/menu">Order again</a>
+          }
+        </div>
+      </div>
+
+    }
+
+  </section>
+
+</div>

@@ -1,117 +1,98 @@
-import { Component, HostListener, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
+﻿import { Component, OnDestroy, computed, effect, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import QRCode from 'qrcode';
-import { AuthService, CartService, OrderService } from '../../services';
+import { AuthService, CartService, MenuService, OrderService } from '../../services';
 
 @Component({
   selector: 'app-qr',
   imports: [RouterLink],
   templateUrl: './qr.html',
-  styleUrl: './qr.css',
+  styleUrl: './qr.css'
 })
-export class Qr implements OnInit, OnDestroy {
-  private router = inject(Router);
-  private auth = inject(AuthService);
+export class Qr implements OnDestroy {
+  auth = inject(AuthService);
   cart = inject(CartService);
+  private menuService = inject(MenuService);
+  private router = inject(Router);
 
-  user = this.auth.user;            
-  cartCount = this.cart.count;
-  order = inject(OrderService).last;   
+  order = inject(OrderService).last;
+
   profileOpen = signal(false);
   cartOpen = signal(false);
 
-  qrImage = signal('');             // the QR code picture
-  secondsLeft = signal(0);
+  // ---------- black bar ----------
+  links = [
+    { label: 'Menu', path: '/menu' },
+    { label: 'Order', path: '/order' },
+    { label: 'Rewards', path: '/rewards' },
+    { label: 'History', path: '/history' },
+  ];
 
-  private timer?: ReturnType<typeof setInterval>;
+  navOpen = signal(false);
+  selected = signal('/order');
 
-  expired = computed(() => this.secondsLeft() <= 0);
+  toggleNav() { this.navOpen.update(v => !v); }
+  expandNav() { this.navOpen.set(true); }
 
-  // 29:45 style countdown
-  countdown = computed(() => {
-    const minutes = Math.floor(this.secondsLeft() / 60);
-    const seconds = String(this.secondsLeft() % 60).padStart(2, '0');
-    return `${minutes}:${seconds}`;
-  });
-
-  // Pending, Completed, Expired or Cancelled
-  statusLabel = computed(() => {
-    const status = this.order()?.status ?? 'pending';
-    if (status === 'pending' && this.expired()) return 'Expired';
-    return status.charAt(0).toUpperCase() + status.slice(1);
-  });
-
-  ngOnInit() {
-    const order = this.order();
-
-    // nothing was ordered, so go back to the menu
-    if (!order) {
-      this.router.navigate(['/menu']);
-      return;
+  pick(path: string) {
+    this.selected.set(path);
+    this.navOpen.set(false);
+    if (path !== '/order') {
+      setTimeout(() => this.router.navigate([path]), 450);
     }
+  }
 
-    // the QR code holds the one-time token that the kiosk reads
-    QRCode.toDataURL(order.qr_token, {
-      width: 360,
-      margin: 1,
-      errorCorrectionLevel: 'M',
-      color: { dark: '#111111', light: '#fdf1e8' },
-    }).then(url => this.qrImage.set(url));
+  // ---------- QR image ----------
+  qrImage = signal('');
 
-    this.updateCountdown();
-    this.timer = setInterval(() => this.updateCountdown(), 1000);
+  // ---------- countdown ----------
+  private now = signal(Date.now());
+  private timer = setInterval(() => this.now.set(Date.now()), 1000);
+
+  remaining = computed(() => {
+    const expires = Date.parse(this.order()?.qr_expires_at ?? '');
+    return Number.isNaN(expires) ? 0 : Math.max(0, expires - this.now());
+  });
+
+  countdown = computed(() => {
+    const total = Math.floor(this.remaining() / 1000);
+    const m = String(Math.floor(total / 60)).padStart(2, '0');
+    const s = String(total % 60).padStart(2, '0');
+    return m + ':' + s;
+  });
+
+  expired = computed(() => this.order()?.status === 'Pending' && this.remaining() === 0);
+  statusLabel = computed(() => (this.expired() ? 'Expired' : this.order()?.status ?? ''));
+
+  constructor() {
+    effect(() => {
+      const o = this.order();
+      if (!o) {
+        this.qrImage.set('');
+        return;
+      }
+      QRCode.toDataURL(o.qr_token, { width: 360, margin: 1 }).then((url: string) =>
+        this.qrImage.set(url)
+      );
+    });
   }
 
   ngOnDestroy() {
     clearInterval(this.timer);
   }
 
-  private updateCountdown() {
-    const expiresAt = Date.parse(this.order()?.qr_expires_at ?? '');
-    const seconds = Math.floor((expiresAt - Date.now()) / 1000);
-
-    this.secondsLeft.set(Number.isNaN(seconds) ? 0 : Math.max(0, seconds));
-  }
-
   // ---------- top bar ----------
-
-  toggleProfile() {
-    this.profileOpen.update(v => !v);
-    this.cartOpen.set(false);
-  }
-
-  toggleCart() {
-    this.cartOpen.update(v => !v);
-    this.profileOpen.set(false);
-  }
-
-  closeAll() {
-    this.profileOpen.set(false);
-    this.cartOpen.set(false);
-  }
-
-  // click anywhere outside the profile or cart card closes it
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: Event) {
-    const target = event.target as HTMLElement | null;
-
-    if (!target?.closest('.profile-btn, .cart-btn')) {
-      this.closeAll();
-    }
-  }
-
-  @HostListener('document:keydown.escape')
-  onEscape() {
-    this.closeAll();
-  }
+  toggleProfile() { this.profileOpen.update(v => !v); this.cartOpen.set(false); }
+  toggleCart() { this.cartOpen.update(v => !v); this.profileOpen.set(false); }
 
   logout() {
     this.auth.logout();
     this.profileOpen.set(false);
   }
 
-  // the X button on the black bar goes back to the menu
-  closePage() {
+  search = this.menuService.search;
+  onSearch(event: Event) {
+    this.search.set((event.target as HTMLInputElement).value);
     this.router.navigate(['/menu']);
   }
 }

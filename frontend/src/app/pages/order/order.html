@@ -1,1 +1,147 @@
-<p>order works!</p>
+<div class="page">
+
+  <!-- brand -->
+  <header class="brand">
+    <a class="brand-link" routerLink="/">
+      <img class="logo-img" src="/logo.png" alt="Mr. Hungry logo">
+      <p>Mr.Hungry</p>
+    </a>
+  </header>
+
+  <!-- orange bar -->
+  <div class="orange-bar">
+    <button type="button" class="menu-btn" (click)="toggleNav()"
+            [attr.aria-expanded]="navOpen()" aria-label="Toggle menu">&#9776;</button>
+
+    <input type="text" class="search" placeholder="Type here" aria-label="Search the menu"
+           [value]="search()" (input)="onSearch($event)">
+
+    <div class="profile-wrap">
+      <button type="button" class="profile" (click)="toggleProfile()" aria-label="Profile">
+        &#128100; {{ auth.user()?.name ?? 'Guest' }}
+      </button>
+
+      @if (profileOpen()) {
+        <div class="popover">
+          @if (auth.user(); as user) {
+            <p class="p-name">{{ user.name }}</p>
+            <p>{{ user.email }}</p>
+            <p>{{ user.points }} points</p>
+            <button type="button" class="pop-btn" (click)="logout()">Log out</button>
+          } @else {
+            <p>You are ordering as a guest. Register to earn points.</p>
+            <a class="pop-btn" routerLink="/login">Login or Register</a>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="cart-wrap">
+      <button type="button" class="cart" (click)="toggleCart()"
+              [attr.aria-label]="'Open cart, ' + cart.count() + ' items'">
+        {{ cart.count() }} &#128722;
+      </button>
+
+      @if (cartOpen()) {
+        <div class="popover">
+          @for (line of cart.lines(); track line.item.item_id) {
+            <div class="pop-row">
+              <span>{{ line.qty }} x {{ line.item.name }}</span>
+              <span>&#8369;{{ line.item.price * line.qty }}</span>
+            </div>
+          } @empty {
+            <p>Your cart is empty.</p>
+          }
+
+          @if (cart.count() > 0) {
+            <div class="pop-row pop-total">
+              <span>Subtotal</span>
+              <span>&#8369;{{ cart.subtotal() }}</span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- black bar -->
+  <nav class="nav" [class.expanded]="navOpen()">
+    <div class="nav-items">
+      @for (link of links; track link.path) {
+        <button type="button" class="nav-item"
+                [class.hidden]="!navOpen() && link.path !== selected()"
+                (click)="pick(link.path)">
+          @if (!navOpen() && link.path === selected()) {
+            <span class="play">&#9654;</span>
+          }
+          {{ link.label }}
+        </button>
+      }
+
+      @if (!auth.isLoggedIn()) {
+        <a class="nav-register" routerLink="/login" [class.hidden]="!navOpen()">REGISTER</a>
+      }
+    </div>
+
+    <button type="button" class="nav-close" [class.invisible]="navOpen()"
+            (click)="expandNav()" aria-label="Show all links">&#10005;</button>
+  </nav>
+
+  <!-- your order -->
+  <section class="order">
+    <h1>Your Order</h1>
+
+    <div class="lines">
+      @for (line of cart.lines(); track line.item.item_id) {
+        <article class="line">
+          <div class="line-photo">
+            @if (line.item.image_url) {
+              <img [src]="line.item.image_url" [alt]="line.item.name">
+            } @else {
+              <div class="initial">{{ line.item.name[0] }}</div>
+            }
+          </div>
+
+          <div class="line-info">
+            <p class="line-name">{{ line.item.name }}</p>
+            <p class="line-text">&#8369;{{ line.item.price }}</p>
+            <p class="line-text">{{ line.qty }} x</p>
+            <p class="line-text">&#8369;{{ line.item.price * line.qty }}</p>
+          </div>
+
+          <div class="stepper">
+            <button type="button" (click)="removeItem(line.item)"
+                    [attr.aria-label]="'Remove one ' + line.item.name">&minus;</button>
+            <b>{{ line.qty }}</b>
+            <button type="button" (click)="addItem(line.item)"
+                    [attr.aria-label]="'Add one more ' + line.item.name">+</button>
+          </div>
+        </article>
+      } @empty {
+        <p class="note">Your cart is empty. <a routerLink="/menu">Pick something from the menu.</a></p>
+      }
+    </div>
+
+    @if (cart.count() > 0) {
+      <div class="summary">
+        <h2>Order Summary</h2>
+        <div class="sum-row"><span>Subtotal</span><span>&#8369;{{ subtotal() }}</span></div>
+        <div class="sum-row"><span>Reward Discount</span><span>&minus;&#8369;{{ rewardDiscount() }}</span></div>
+        <div class="sum-row sum-total"><span>Total at Counter</span><span>&#8369;{{ total() }}</span></div>
+      </div>
+
+      <div class="points">
+        @if (auth.isLoggedIn()) {
+          +{{ pointsEarned() }} points after the cashier confirms your order.
+        } @else {
+          Register to earn points on this order.
+        }
+      </div>
+
+      <button type="button" class="place-btn" [disabled]="placing()" (click)="placeOrder()">
+        Place Order And Get QR Code
+      </button>
+    }
+  </section>
+
+</div>

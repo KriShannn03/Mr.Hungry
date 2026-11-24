@@ -53,24 +53,30 @@ export class Order {
 
   placing = signal(false);
 
-  placeOrder() {
-  if (this.cart.count() === 0 || this.placing()) return;
-  this.placing.set(true);
+   placeOrder() {
+    if (this.cart.count() === 0 || this.placing()) return;
+    this.placing.set(true);
 
-  // temporary: saved locally until the back end can create orders
-  this.orders.last.set({
-    token: crypto.randomUUID(),
-    lines: this.cart.lines(),
-    total: this.total(),
-    pointsEarned: this.pointsEarned(),
-    status: 'Pending',
-    created_at: new Date().toISOString(),
-  });
+    // temporary: saved locally until the back end can create orders
+    this.orders.last.set({
+      order_number: String(Date.now()).slice(-6),
+      qr_token: crypto.randomUUID(),
+      qr_expires_at: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+      lines: this.cart.lines().map(l => ({
+        name: l.item.name,
+        price: l.item.price,
+        qty: l.qty,
+      })),
+      total: this.total(),
+      points_earned: this.pointsEarned(),
+      status: 'Pending',
+      created_at: new Date().toISOString(),
+    });
 
-  this.cart.clear();
-  this.placing.set(false);
-  this.router.navigate(['/qr']);
-}
+    this.cart.clear();
+    this.placing.set(false);
+    this.router.navigate(['/qr']);
+  }
 
   // ---------- top bar ----------
   toggleProfile() { this.profileOpen.update(v => !v); this.cartOpen.set(false); }

@@ -1,7 +1,8 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService, CartService, MenuService } from '../../services';
+import { AuthService, CartService, MenuService, OrderService } from '../../services';
 import { MenuItem } from '../../models';
+
 
 const PESOS_PER_POINT = 10; // assumption: 1 point for every P10 spent. Change to match your rewards rule.
 
@@ -16,6 +17,7 @@ export class Order {
   cart = inject(CartService);
   private menuService = inject(MenuService);
   private router = inject(Router);
+  private orders = inject(OrderService);
 
   profileOpen = signal(false);
   cartOpen = signal(false);
@@ -52,10 +54,23 @@ export class Order {
   placing = signal(false);
 
   placeOrder() {
-    if (this.cart.count() === 0 || this.placing()) return;
-    this.placing.set(true);
-    // TODO: send the order with your order service, then go to your QR code page
-  }
+  if (this.cart.count() === 0 || this.placing()) return;
+  this.placing.set(true);
+
+  // temporary: saved locally until the back end can create orders
+  this.orders.last.set({
+    token: crypto.randomUUID(),
+    lines: this.cart.lines(),
+    total: this.total(),
+    pointsEarned: this.pointsEarned(),
+    status: 'Pending',
+    created_at: new Date().toISOString(),
+  });
+
+  this.cart.clear();
+  this.placing.set(false);
+  this.router.navigate(['/qr']);
+}
 
   // ---------- top bar ----------
   toggleProfile() { this.profileOpen.update(v => !v); this.cartOpen.set(false); }

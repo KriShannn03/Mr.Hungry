@@ -1,5 +1,6 @@
 ﻿import { Component, OnDestroy, computed, effect, inject, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
 import QRCode from 'qrcode';
 import { AuthService, CartService, MenuService, OrderService } from '../../services';
 
@@ -15,7 +16,15 @@ export class Qr implements OnDestroy {
   private menuService = inject(MenuService);
   private router = inject(Router);
 
-  order = inject(OrderService).last;
+  private orderService = inject(OrderService);
+  private route = inject(ActivatedRoute);
+  private params = toSignal(this.route.paramMap, { initialValue: this.route.snapshot.paramMap });
+
+  // /qr/123456 shows that order, /qr shows the newest one
+  order = computed(() => {
+    const number = this.params().get('number');
+    return number ? this.orderService.find(number) : this.orderService.last();
+  });
 
   profileOpen = signal(false);
   cartOpen = signal(false);
@@ -96,3 +105,4 @@ export class Qr implements OnDestroy {
     this.router.navigate(['/menu']);
   }
 }
+

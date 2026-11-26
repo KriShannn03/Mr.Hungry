@@ -1,0 +1,152 @@
+﻿<div class="page">
+
+  <header class="brand">
+    <img class="logo-img" src="/logo.png" alt="Mr. Hungry logo">
+    <p>Mr.Hungry</p>
+  </header>
+
+  <div class="orange-bar">
+    <button type="button" class="menu-btn" (click)="toggleNav()"
+            [attr.aria-expanded]="navOpen()" aria-label="Toggle menu">&#9776;</button>
+
+    <input type="text" class="search" placeholder="Type here" aria-label="Search the menu"
+           [value]="search()" (input)="onSearch($event)">
+
+    <div class="profile-wrap">
+      <button type="button" class="profile" (click)="toggleProfile()" aria-label="Profile">
+        &#128100; {{ auth.user()?.name ?? 'Guest' }}
+      </button>
+
+      @if (profileOpen()) {
+        <div class="popover">
+          @if (auth.user(); as user) {
+            <p class="p-name">{{ user.name }}</p>
+            <p>{{ user.email }}</p>
+            <p>{{ user.points }} points</p>
+            <button type="button" class="pop-btn" (click)="logout()">Log out</button>
+          } @else {
+            <p>You are ordering as a guest. Register to earn points.</p>
+            <a class="pop-btn" routerLink="/login">Login or Register</a>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="cart-wrap">
+      <button type="button" class="cart" (click)="toggleCart()"
+              [attr.aria-label]="'Open cart, ' + cart.count() + ' items'">
+        {{ cart.count() }} &#128722;
+      </button>
+
+      @if (cartOpen()) {
+        <div class="popover">
+          @for (line of cart.lines(); track line.item.item_id) {
+            <div class="pop-row">
+              <span>{{ line.qty }} x {{ line.item.name }}</span>
+              <span>&#8369;{{ line.item.price * line.qty }}</span>
+            </div>
+          } @empty {
+            <p>Your cart is empty.</p>
+          }
+
+          @if (cart.count() > 0) {
+            <div class="pop-row pop-total">
+              <span>Subtotal</span>
+              <span>&#8369;{{ cart.subtotal() }}</span>
+            </div>
+            <a class="pop-btn" routerLink="/order">Check out</a>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <nav class="nav" [class.expanded]="navOpen()">
+    <div class="nav-items">
+      @for (link of links; track link.path) {
+        <button type="button" class="nav-item"
+                [class.hidden]="!navOpen() && link.path !== selected()"
+                (click)="pick(link.path)">
+          @if (!navOpen() && link.path === selected()) {
+            <span class="play">&#9654;</span>
+          }
+          {{ link.label }}
+        </button>
+      }
+
+      @if (!auth.isLoggedIn()) {
+        <a class="nav-register" routerLink="/login" [class.hidden]="!navOpen()">REGISTER</a>
+      }
+    </div>
+
+    <button type="button" class="nav-close" [class.invisible]="navOpen()"
+            (click)="expandNav()" aria-label="Show all links">&#10005;</button>
+  </nav>
+
+  <section class="history">
+    <h1>Order History</h1>
+
+    @if (orders().length === 0) {
+      <div class="empty">
+        <p>You haven't placed any orders yet.</p>
+        <a class="main-btn" routerLink="/menu">Go to the menu</a>
+      </div>
+    } @else {
+      <div class="list">
+        @for (o of orders(); track o.order_number) {
+          <article class="order-card">
+
+            <div class="order-top">
+              <div>
+                <p class="order-no">Order #{{ o.order_number }}</p>
+                <p class="order-date">{{ o.created_at | date:'MMM d, y, h:mm a' }}</p>
+              </div>
+
+              <span class="pill"
+                    [class.pending]="statusOf(o) === 'Pending'"
+                    [class.completed]="statusOf(o) === 'Completed'"
+                    [class.expired]="statusOf(o) === 'Expired'">{{ statusOf(o) }}</span>
+            </div>
+
+            <div class="order-mid">
+              <span>{{ o.lines.length }} item{{ o.lines.length === 1 ? '' : 's' }}</span>
+              <b>&#8369;{{ o.total }}</b>
+            </div>
+
+            <div class="order-actions">
+              <a class="main-btn" [routerLink]="['/qr', o.order_number]">
+                {{ isPending(o) ? 'Show QR' : 'View receipt' }}
+              </a>
+              <button type="button" class="ghost-btn" (click)="toggle(o)"
+                      [attr.aria-expanded]="isOpen(o)">
+                {{ isOpen(o) ? 'Hide details' : 'Details' }}
+              </button>
+            </div>
+
+            @if (isOpen(o)) {
+              <div class="receipt">
+                @for (line of o.lines; track line.name) {
+                  <div class="receipt-row">
+                    <span>{{ line.qty }} x {{ line.name }}</span>
+                    <span>&#8369;{{ line.qty * line.price }}</span>
+                  </div>
+                }
+                <div class="receipt-row total">
+                  <span>Total</span>
+                  <span>&#8369;{{ o.total }}</span>
+                </div>
+                @if (o.points_earned > 0) {
+                  <p class="points">+{{ o.points_earned }} points</p>
+                }
+              </div>
+            }
+
+          </article>
+        }
+      </div>
+
+      <button type="button" class="clear" (click)="clearHistory()">Clear history</button>
+    }
+  </section>
+
+</div>

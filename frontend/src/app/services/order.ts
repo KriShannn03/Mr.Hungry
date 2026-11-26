@@ -1,4 +1,4 @@
-﻿import { Injectable, effect, signal } from '@angular/core';
+﻿import { Injectable, computed, effect, signal } from '@angular/core';
 
 export interface PlacedLine {
   name: string;
@@ -18,30 +18,48 @@ export interface PlacedOrder {
   created_at: string;
 }
 
-const KEY = 'mr-hungry-last-order';
+const KEY = 'mr-hungry-orders';
 
-function load(): PlacedOrder | null {
+function load(): PlacedOrder[] {
   try {
     const raw = localStorage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as PlacedOrder) : null;
+    const data = raw ? JSON.parse(raw) : [];
+    return Array.isArray(data) ? data : [];
   } catch {
-    return null;
+    return [];
   }
+}
+
+export function isExpired(order: PlacedOrder, now = Date.now()) {
+  return order.status === 'Pending' && Date.parse(order.qr_expires_at) <= now;
 }
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
-  last = signal<PlacedOrder | null>(load());
+  orders = signal<PlacedOrder[]>(load());
+  now = signal(Date.now());
+
+  last = computed(() => this.orders()[0] ?? null);
+  active = computed(
+    () => this.orders().find(o => o.status === 'Pending' && !isExpired(o, this.now())) ?? null
+  );
 
   constructor() {
     effect(() => {
-      const order = this.last();
       try {
-        if (order) localStorage.setItem(KEY, JSON.stringify(order));
-        else localStorage.removeItem(KEY);
+        localStorage.setItem(KEY, JSON.stringify(this.orders()));
       } catch {
         // storage unavailable: ignore
       }
     });
+    setInterval(() => this.now.set(Date.now()), 15000);
+  }
+
+  add(order: PlacedOrder) {
+    this.orders.update(list => [order, ...list]);
+  }
+
+  find(number: string) {
+    return this.orders().find(o => String(o.order_number) === number) ?? null;
   }
 }

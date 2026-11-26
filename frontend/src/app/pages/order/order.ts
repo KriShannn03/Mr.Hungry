@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+﻿import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService, CartService, MenuService, OrderService } from '../../services';
 import { MenuItem } from '../../models';
@@ -58,7 +58,7 @@ export class Order {
     this.placing.set(true);
 
     // temporary: saved locally until the back end can create orders
-    this.orders.last.set({
+    this.orders.add({
       order_number: String(Date.now()).slice(-6),
       qr_token: crypto.randomUUID(),
       qr_expires_at: new Date(Date.now() + 30 * 60 * 1000).toISOString(),

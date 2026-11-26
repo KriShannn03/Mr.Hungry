@@ -1,4 +1,4 @@
-<div class="page">
+﻿<div class="page">
 
   <!-- ================= LOGO / BRAND ================= -->
   <header class="brand">
@@ -38,7 +38,14 @@
           <label for="password">Password</label>
           <input id="password" type="password" class="field" [value]="password()" (input)="onPassword($event)">
 
-          <a class="forgot" href="#">Forget Password?</a>
+          <div class="row">
+            <label class="remember">
+              <input type="checkbox" [checked]="remember()" (change)="onRemember($event)">
+              <span>Remember Me</span>
+            </label>
+
+            <a class="forgot" href="#">Forget Password?</a>
+          </div>
 
           @if (error()) {
             <p class="error">{{ error() }}</p>
@@ -59,5 +66,12 @@
     </section>
 
   </main>
+
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="footer">
+    <p>Facebook: Mr Hungry</p>
+    <p>2nd floor Aniles street argy Kanluran Calauan, Calauan, Philippines, 4012</p>
+  </footer>
 
 </div>

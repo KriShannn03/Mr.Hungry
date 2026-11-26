@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&family=Krona+One&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&family=Krona+One&display=swap');
 
 :host {
     display: block;
@@ -8,10 +8,13 @@
     box-sizing: border-box;
 }
 
+/* the whole page is green and at least as tall as the screen */
 .page {
-    max-width: none;
-    margin: 0 auto;
-    background: white;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100dvh;
+    background: #2f4a3f url('/images/bg-green.jpg') center / cover no-repeat;
     font-family: 'Montserrat', sans-serif;
     color: #111;
 }
@@ -24,6 +27,7 @@
     align-items: center;
     gap: 16px;
     padding: 8px 40px;
+    background: white;
 }
 
 .logo-img {
@@ -44,6 +48,7 @@
 /* ---------- split layout (phone: stacked) ---------- */
 
 .split {
+    flex: 1;
     display: grid;
     grid-template-columns: 1fr;
 }
@@ -158,13 +163,38 @@ label {
     font-size: 15px;
 }
 
+/* remember me (left) + forget password (right) */
+.row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 10px 0 12px;
+}
+
+label.remember {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-family: 'Krona One', sans-serif;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.remember input {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    accent-color: #1e7a34;
+}
+
 .forgot {
-    display: inline-block;
-    margin: 8px 0 12px;
     color: #111;
     text-decoration: none;
     font-family: 'Krona One', sans-serif;
     font-size: 11px;
+    white-space: nowrap;
 }
 
 .forgot:hover {
@@ -220,13 +250,35 @@ label {
 }
 
 
+/* ---------- footer ---------- */
+
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px;
+    background: #111;
+    color: white;
+    font-size: 9px;
+}
+
+.footer p {
+    margin: 0;
+}
+
+.footer p:last-child {
+    max-width: 55%;
+    text-align: right;
+}
+
+
 /* ---------- tablet and desktop (768px and wider): photo on the left, card on the right ---------- */
 
 @media (min-width: 768px) {
 
     .split {
         grid-template-columns: 1fr 1fr;
-        min-height: calc(100vh - 56px);
     }
 
     .left {
@@ -244,6 +296,15 @@ label {
 
     .right {
         padding: 48px;
+    }
+
+    .footer {
+        padding: 18px 40px;
+        font-size: 13px;
+    }
+
+    .footer p:last-child {
+        max-width: none;
     }
 }
 

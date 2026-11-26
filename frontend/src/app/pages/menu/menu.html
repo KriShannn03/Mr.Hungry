@@ -1,20 +1,32 @@
 ﻿<div class="page">
-
   <!-- brand -->
   <header class="brand">
-  <a class="brand-link" routerLink="/">
-    <img class="logo-img" src="/logo.png" alt="Mr. Hungry logo">
-    <p>Mr. Hungry</p>
-  </a>
-</header>
+    <a class="brand-link" routerLink="/">
+      <img class="logo-img" src="/logo.png" alt="Mr. Hungry logo" />
+      <p>Mr. Hungry</p>
+    </a>
+  </header>
 
   <!-- orange bar -->
   <div class="orange-bar">
-    <button type="button" class="menu-btn" (click)="toggleNav()"
-            [attr.aria-expanded]="navOpen()" aria-label="Toggle menu">&#9776;</button>
+    <button
+      type="button"
+      class="menu-btn"
+      (click)="toggleNav()"
+      [attr.aria-expanded]="navOpen()"
+      aria-label="Toggle menu"
+    >
+      &#9776;
+    </button>
 
-    <input type="text" class="search" placeholder="Type here" aria-label="Search the menu"
-           [value]="search()" (input)="onSearch($event)">
+    <input
+      type="text"
+      class="search"
+      placeholder="Type here"
+      aria-label="Search the menu"
+      [value]="search()"
+      (input)="onSearch($event)"
+    />
 
     <div class="profile-wrap">
       <button type="button" class="profile" (click)="toggleProfile()" aria-label="Profile">
@@ -27,6 +39,13 @@
             <p class="p-name">{{ user.name }}</p>
             <p>{{ user.email }}</p>
             <p>{{ user.points }} points</p>
+            <a class="pop-btn" routerLink="/account">My account</a>
+            @if (user.role === 'admin') {
+              <a class="pop-btn" routerLink="/admin">Admin dashboard</a>
+            }
+            @if (user.role === 'cashier') {
+              <a class="pop-btn" routerLink="/cashier">Cashier dashboard</a>
+            }
             <button type="button" class="pop-btn" (click)="logout()">Log out</button>
           } @else {
             <p>You are ordering as a guest. Register to earn points.</p>
@@ -37,8 +56,12 @@
     </div>
 
     <div class="cart-wrap">
-      <button type="button" class="cart" (click)="toggleCart()"
-              [attr.aria-label]="'Open cart, ' + cart.count() + ' items'">
+      <button
+        type="button"
+        class="cart"
+        (click)="toggleCart()"
+        [attr.aria-label]="'Open cart, ' + cart.count() + ' items'"
+      >
         {{ cart.count() }} &#128722;
       </button>
 
@@ -69,9 +92,12 @@
   <nav class="nav" [class.expanded]="navOpen()">
     <div class="nav-items">
       @for (link of links; track link.path) {
-        <button type="button" class="nav-item"
-                [class.hidden]="!navOpen() && link.path !== selected()"
-                (click)="pick(link.path)">
+        <button
+          type="button"
+          class="nav-item"
+          [class.hidden]="!navOpen() && link.path !== selected()"
+          (click)="pick(link.path)"
+        >
           @if (!navOpen() && link.path === selected()) {
             <span class="play">&#9654;</span>
           }
@@ -84,8 +110,15 @@
       }
     </div>
 
-    <button type="button" class="nav-close" [class.invisible]="navOpen()"
-            (click)="expandNav()" aria-label="Show all links">&#10005;</button>
+    <button
+      type="button"
+      class="nav-close"
+      [class.invisible]="navOpen()"
+      (click)="expandNav()"
+      aria-label="Show all links"
+    >
+      &#10005;
+    </button>
   </nav>
 
   <!-- categories -->
@@ -94,10 +127,15 @@
 
     <div class="chips" role="group" aria-label="Categories">
       @for (category of categories(); track category) {
-        <button type="button" class="chip"
-                [class.active]="!search() && category === activeCategory()"
-                [attr.aria-pressed]="!search() && category === activeCategory()"
-                (click)="selectCategory(category)">{{ category }}</button>
+        <button
+          type="button"
+          class="chip"
+          [class.active]="!search() && category === activeCategory()"
+          [attr.aria-pressed]="!search() && category === activeCategory()"
+          (click)="selectCategory(category)"
+        >
+          {{ category }}
+        </button>
       }
     </div>
 
@@ -108,6 +146,9 @@
 
   <!-- products -->
   <section class="products">
+    @if (error()) {
+      <p class="note">{{ error() }}</p>
+    }
     <div class="grid">
       @if (loading()) {
         @for (n of [1, 2, 3, 4, 5, 6]; track n) {
@@ -126,7 +167,7 @@
           <article class="product">
             <div class="photo">
               @if (item.image_url) {
-                <img [src]="item.image_url" [alt]="item.name">
+                <img [src]="item.image_url" [alt]="item.name" />
               } @else {
                 <div class="initial">{{ item.name[0] }}</div>
               }
@@ -142,15 +183,31 @@
               </div>
 
               @if (quantityOf(item.item_id) === 0) {
-                <button type="button" class="add-btn" (click)="addItem(item)"
-                        [attr.aria-label]="'Add ' + item.name + ' to order'">Add</button>
+                <button
+                  type="button"
+                  class="add-btn"
+                  (click)="addItem(item)"
+                  [attr.aria-label]="'Add ' + item.name + ' to order'"
+                >
+                  Add
+                </button>
               } @else {
                 <div class="stepper">
-                  <button type="button" (click)="removeItem(item)"
-                          [attr.aria-label]="'Remove one ' + item.name">&minus;</button>
+                  <button
+                    type="button"
+                    (click)="removeItem(item)"
+                    [attr.aria-label]="'Remove one ' + item.name"
+                  >
+                    &minus;
+                  </button>
                   <b>{{ quantityOf(item.item_id) }}</b>
-                  <button type="button" (click)="addItem(item)"
-                          [attr.aria-label]="'Add one more ' + item.name">+</button>
+                  <button
+                    type="button"
+                    (click)="addItem(item)"
+                    [attr.aria-label]="'Add one more ' + item.name"
+                  >
+                    +
+                  </button>
                 </div>
               }
             </div>
@@ -165,9 +222,11 @@
   <!-- bottom cart bar -->
   @if (cart.count() > 0) {
     <div class="cart-bar">
-      <span><b>{{ cart.count() }}</b> item{{ cart.count() === 1 ? '' : 's' }} &middot; <b>&#8369;{{ cart.subtotal() }}</b></span>
+      <span
+        ><b>{{ cart.count() }}</b> item{{ cart.count() === 1 ? '' : 's' }} &middot;
+        <b>&#8369;{{ cart.subtotal() }}</b></span
+      >
       <a class="view-btn" routerLink="/order">Check out</a>
     </div>
   }
-
 </div>

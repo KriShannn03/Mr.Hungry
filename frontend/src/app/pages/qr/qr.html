@@ -1,16 +1,28 @@
 ﻿<div class="page">
-
   <header class="brand">
-    <img class="logo-img" src="/logo.png" alt="Mr. Hungry logo">
+    <img class="logo-img" src="/logo.png" alt="Mr. Hungry logo" />
     <p>Mr.Hungry</p>
   </header>
 
   <div class="orange-bar">
-    <button type="button" class="menu-btn" (click)="toggleNav()"
-            [attr.aria-expanded]="navOpen()" aria-label="Toggle menu">&#9776;</button>
+    <button
+      type="button"
+      class="menu-btn"
+      (click)="toggleNav()"
+      [attr.aria-expanded]="navOpen()"
+      aria-label="Toggle menu"
+    >
+      &#9776;
+    </button>
 
-    <input type="text" class="search" placeholder="Type here" aria-label="Search the menu"
-           [value]="search()" (input)="onSearch($event)">
+    <input
+      type="text"
+      class="search"
+      placeholder="Type here"
+      aria-label="Search the menu"
+      [value]="search()"
+      (input)="onSearch($event)"
+    />
 
     <div class="profile-wrap">
       <button type="button" class="profile" (click)="toggleProfile()" aria-label="Profile">
@@ -23,6 +35,13 @@
             <p class="p-name">{{ user.name }}</p>
             <p>{{ user.email }}</p>
             <p>{{ user.points }} points</p>
+            <a class="pop-btn" routerLink="/account">My account</a>
+            @if (user.role === 'admin') {
+              <a class="pop-btn" routerLink="/admin">Admin dashboard</a>
+            }
+            @if (user.role === 'cashier') {
+              <a class="pop-btn" routerLink="/cashier">Cashier dashboard</a>
+            }
             <button type="button" class="pop-btn" (click)="logout()">Log out</button>
           } @else {
             <p>You are ordering as a guest. Register to earn points.</p>
@@ -33,8 +52,12 @@
     </div>
 
     <div class="cart-wrap">
-      <button type="button" class="cart" (click)="toggleCart()"
-              [attr.aria-label]="'Open cart, ' + cart.count() + ' items'">
+      <button
+        type="button"
+        class="cart"
+        (click)="toggleCart()"
+        [attr.aria-label]="'Open cart, ' + cart.count() + ' items'"
+      >
         {{ cart.count() }} &#128722;
       </button>
 
@@ -64,9 +87,12 @@
   <nav class="nav" [class.expanded]="navOpen()">
     <div class="nav-items">
       @for (link of links; track link.path) {
-        <button type="button" class="nav-item"
-                [class.hidden]="!navOpen() && link.path !== selected()"
-                (click)="pick(link.path)">
+        <button
+          type="button"
+          class="nav-item"
+          [class.hidden]="!navOpen() && link.path !== selected()"
+          (click)="pick(link.path)"
+        >
           @if (!navOpen() && link.path === selected()) {
             <span class="play">&#9654;</span>
           }
@@ -79,38 +105,48 @@
       }
     </div>
 
-    <button type="button" class="nav-close" [class.invisible]="navOpen()"
-            (click)="expandNav()" aria-label="Show all links">&#10005;</button>
+    <button
+      type="button"
+      class="nav-close"
+      [class.invisible]="navOpen()"
+      (click)="expandNav()"
+      aria-label="Show all links"
+    >
+      &#10005;
+    </button>
   </nav>
 
   <section class="qr-section">
     @if (order(); as o) {
       <div class="qr-layout">
-
         <div class="qr-box">
           @if (qrImage()) {
-            <img [src]="qrImage()" [alt]="'QR code for order ' + o.order_number">
+            <img [src]="qrImage()" [alt]="'QR code for order ' + o.order_number" />
           } @else {
             <div class="qr-loading"></div>
           }
         </div>
 
         <div class="qr-info">
-          <h1>Show this at<br>the counter</h1>
+          <h1>Show this at<br />the counter</h1>
 
           <div class="qr-meta">
             <span class="order-no">Order #{{ o.order_number }}</span>
             <span class="pill status" [class.expired]="expired()">{{ statusLabel() }}</span>
             @if (o.status === 'Pending') {
               <span class="pill expires">
-                @if (expired()) { Expired } @else { Expires in {{ countdown() }} }
+                @if (expired()) {
+                  Expired
+                } @else {
+                  Expires in {{ countdown() }}
+                }
               </span>
             }
           </div>
 
           <p class="qr-text">
-            The cashier scans this code, you pay at the counter, and the order is marked
-            Completed. The code works once and expires after 30 minutes.
+            The cashier scans this code, you pay at the counter, and the order is marked Completed.
+            The code works once and expires after 30 minutes.
           </p>
 
           <div class="summary">
@@ -135,7 +171,6 @@
 
           <a class="view-order" routerLink="/history">View Order</a>
         </div>
-
       </div>
     } @else {
       <div class="empty">
@@ -145,5 +180,4 @@
       </div>
     }
   </section>
-
 </div>

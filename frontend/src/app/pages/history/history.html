@@ -1,16 +1,28 @@
 ﻿<div class="page">
-
   <header class="brand">
-    <img class="logo-img" src="/logo.png" alt="Mr. Hungry logo">
+    <img class="logo-img" src="/logo.png" alt="Mr. Hungry logo" />
     <p>Mr.Hungry</p>
   </header>
 
   <div class="orange-bar">
-    <button type="button" class="menu-btn" (click)="toggleNav()"
-            [attr.aria-expanded]="navOpen()" aria-label="Toggle menu">&#9776;</button>
+    <button
+      type="button"
+      class="menu-btn"
+      (click)="toggleNav()"
+      [attr.aria-expanded]="navOpen()"
+      aria-label="Toggle menu"
+    >
+      &#9776;
+    </button>
 
-    <input type="text" class="search" placeholder="Type here" aria-label="Search the menu"
-           [value]="search()" (input)="onSearch($event)">
+    <input
+      type="text"
+      class="search"
+      placeholder="Type here"
+      aria-label="Search the menu"
+      [value]="search()"
+      (input)="onSearch($event)"
+    />
 
     <div class="profile-wrap">
       <button type="button" class="profile" (click)="toggleProfile()" aria-label="Profile">
@@ -23,6 +35,13 @@
             <p class="p-name">{{ user.name }}</p>
             <p>{{ user.email }}</p>
             <p>{{ user.points }} points</p>
+            <a class="pop-btn" routerLink="/account">My account</a>
+            @if (user.role === 'admin') {
+              <a class="pop-btn" routerLink="/admin">Admin dashboard</a>
+            }
+            @if (user.role === 'cashier') {
+              <a class="pop-btn" routerLink="/cashier">Cashier dashboard</a>
+            }
             <button type="button" class="pop-btn" (click)="logout()">Log out</button>
           } @else {
             <p>You are ordering as a guest. Register to earn points.</p>
@@ -33,8 +52,12 @@
     </div>
 
     <div class="cart-wrap">
-      <button type="button" class="cart" (click)="toggleCart()"
-              [attr.aria-label]="'Open cart, ' + cart.count() + ' items'">
+      <button
+        type="button"
+        class="cart"
+        (click)="toggleCart()"
+        [attr.aria-label]="'Open cart, ' + cart.count() + ' items'"
+      >
         {{ cart.count() }} &#128722;
       </button>
 
@@ -64,9 +87,12 @@
   <nav class="nav" [class.expanded]="navOpen()">
     <div class="nav-items">
       @for (link of links; track link.path) {
-        <button type="button" class="nav-item"
-                [class.hidden]="!navOpen() && link.path !== selected()"
-                (click)="pick(link.path)">
+        <button
+          type="button"
+          class="nav-item"
+          [class.hidden]="!navOpen() && link.path !== selected()"
+          (click)="pick(link.path)"
+        >
           @if (!navOpen() && link.path === selected()) {
             <span class="play">&#9654;</span>
           }
@@ -79,8 +105,15 @@
       }
     </div>
 
-    <button type="button" class="nav-close" [class.invisible]="navOpen()"
-            (click)="expandNav()" aria-label="Show all links">&#10005;</button>
+    <button
+      type="button"
+      class="nav-close"
+      [class.invisible]="navOpen()"
+      (click)="expandNav()"
+      aria-label="Show all links"
+    >
+      &#10005;
+    </button>
   </nav>
 
   <section class="history">
@@ -95,17 +128,19 @@
       <div class="list">
         @for (o of orders(); track o.order_number) {
           <article class="order-card">
-
             <div class="order-top">
               <div>
                 <p class="order-no">Order #{{ o.order_number }}</p>
-                <p class="order-date">{{ o.created_at | date:'MMM d, y, h:mm a' }}</p>
+                <p class="order-date">{{ o.created_at | date: 'MMM d, y, h:mm a' }}</p>
               </div>
 
-              <span class="pill"
-                    [class.pending]="statusOf(o) === 'Pending'"
-                    [class.completed]="statusOf(o) === 'Completed'"
-                    [class.expired]="statusOf(o) === 'Expired'">{{ statusOf(o) }}</span>
+              <span
+                class="pill"
+                [class.pending]="statusOf(o) === 'Pending'"
+                [class.completed]="statusOf(o) === 'Completed'"
+                [class.expired]="statusOf(o) === 'Expired'"
+                >{{ statusOf(o) }}</span
+              >
             </div>
 
             <div class="order-mid">
@@ -117,8 +152,12 @@
               <a class="main-btn" [routerLink]="['/qr', o.order_number]">
                 {{ isPending(o) ? 'Show QR' : 'View receipt' }}
               </a>
-              <button type="button" class="ghost-btn" (click)="toggle(o)"
-                      [attr.aria-expanded]="isOpen(o)">
+              <button
+                type="button"
+                class="ghost-btn"
+                (click)="toggle(o)"
+                [attr.aria-expanded]="isOpen(o)"
+              >
                 {{ isOpen(o) ? 'Hide details' : 'Details' }}
               </button>
             </div>
@@ -140,13 +179,12 @@
                 }
               </div>
             }
-
           </article>
         }
       </div>
-
-      <button type="button" class="clear" (click)="clearHistory()">Clear history</button>
+      @if (!auth.isLoggedIn()) {
+        <button type="button" class="clear" (click)="clearHistory()">Clear history</button>
+      }
     }
   </section>
-
 </div>

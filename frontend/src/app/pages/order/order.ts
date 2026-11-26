@@ -1,10 +1,9 @@
-﻿import { Component, computed, inject, signal } from '@angular/core';
+﻿import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService, CartService, MenuService, OrderService } from '../../services';
+import { AuthService, CartService, MenuService, MyVoucher, OrderService, RewardsService } from '../../services';
 import { MenuItem } from '../../models';
-
-
-const PESOS_PER_POINT = 10; // assumption: 1 point for every P10 spent. Change to match your rewards rule.
+import { PESOS_PER_POINT } from '../../config';
 
 @Component({
   selector: 'app-order',
@@ -12,12 +11,13 @@ const PESOS_PER_POINT = 10; // assumption: 1 point for every P10 spent. Change t
   templateUrl: './order.html',
   styleUrl: './order.css'
 })
-export class Order {
+export class Order implements OnInit {
   auth = inject(AuthService);
   cart = inject(CartService);
   private menuService = inject(MenuService);
   private router = inject(Router);
   private orders = inject(OrderService);
+  private rewards = inject(RewardsService);
 
   profileOpen = signal(false);
   cartOpen = signal(false);
@@ -45,37 +45,67 @@ export class Order {
     }
   }
 
+  // ---------- vouchers (registered users only) ----------
+  vouchers = signal<MyVoucher[]>([]);
+  voucherId = signal<number | null>(null);
+
+  ngOnInit() {
+    if (this.auth.user()?.role === 'user') {
+      this.rewards.mine().subscribe({
+        next: list => this.vouchers.set(list.filter(v => v.status === 'Available')),
+        error: () => {},
+      });
+    }
+  }
+
+  onVoucher(event: Event) {
+    const value = (event.target as HTMLSelectElement).value;
+    this.voucherId.set(value ? Number(value) : null);
+  }
+
   // ---------- order summary ----------
   subtotal = computed(() => this.cart.subtotal());
-  rewardDiscount = computed(() => 0);   // TODO: replace with the real reward discount
+
+  rewardDiscount = computed(() => {
+    const v = this.vouchers().find(x => x.user_voucher_id === this.voucherId());
+    if (!v) return 0;
+    const sub = this.subtotal();
+    const d = v.discount_type === 'percent' ? Math.round(sub * v.discount_value) / 100 : v.discount_value;
+    return Math.min(d, sub);
+  });
+
   total = computed(() => Math.max(0, this.subtotal() - this.rewardDiscount()));
-  pointsEarned = computed(() => this.auth.isLoggedIn() ? Math.floor(this.total() / PESOS_PER_POINT) : 0);
+  pointsEarned = computed(() =>
+    this.auth.user()?.role === 'user' ? Math.floor(this.total() / PESOS_PER_POINT) : 0
+  );
 
   placing = signal(false);
+  error = signal('');
 
-   placeOrder() {
+  placeOrder() {
     if (this.cart.count() === 0 || this.placing()) return;
     this.placing.set(true);
+    this.error.set('');
 
-    // temporary: saved locally until the back end can create orders
-    this.orders.add({
-      order_number: String(Date.now()).slice(-6),
-      qr_token: crypto.randomUUID(),
-      qr_expires_at: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
-      lines: this.cart.lines().map(l => ({
-        name: l.item.name,
-        price: l.item.price,
-        qty: l.qty,
-      })),
-      total: this.total(),
-      points_earned: this.pointsEarned(),
-      status: 'Pending',
-      created_at: new Date().toISOString(),
+    // only ids and quantities are sent. The server looks up the real prices.
+    const items = this.cart.lines().map(l => ({ item_id: l.item.item_id, qty: l.qty }));
+
+    this.orders.place(items, this.voucherId()).subscribe({
+      next: order => {
+        this.cart.clear();
+        this.placing.set(false);
+        this.router.navigate(['/qr', order.order_number]);
+      },
+      error: (e: HttpErrorResponse) => {
+        this.placing.set(false);
+        // drop items the admin removed or hid since they were added to the cart
+        for (const id of (e.error?.unavailable ?? []) as number[]) {
+          const qty = this.cart.quantityOf(id);
+          if (qty) this.cart.change(id, -qty);
+        }
+        this.error.set(e.error?.message ?? 'Could not place your order. Please try again.');
+      },
     });
-
-    this.cart.clear();
-    this.placing.set(false);
-    this.router.navigate(['/qr']);
   }
 
   // ---------- top bar ----------

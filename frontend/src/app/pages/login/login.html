@@ -1,46 +1,70 @@
 ﻿<div class="page">
-
   <!-- ================= LOGO / BRAND ================= -->
   <header class="brand">
-    <img class="logo-img" src="/logo.png" alt="Mr. Hungry logo">
+    <img class="logo-img" src="/logo.png" alt="Mr. Hungry logo" />
 
     <p>Mr.Hungry</p>
   </header>
 
-
   <main class="split">
-
     <!-- ================= LEFT: PHOTO ================= -->
     <section class="left">
       <span class="watermark">MR HUNGRY</span>
 
-      <h1>Satisfy<br>Every<br>Craving</h1>
+      <h1>Satisfy<br />Every<br />Craving</h1>
     </section>
-
 
     <!-- ================= RIGHT: LOGIN CARD ================= -->
     <section class="right">
-
       <div class="card">
-
         <!-- tabs -->
         <div class="tabs">
-          <button type="button" class="tab" [class.active]="mode() === 'register'" (click)="setMode('register')">Register</button>
-          <button type="button" class="tab" [class.active]="mode() === 'login'" (click)="setMode('login')">Login</button>
+          <button
+            type="button"
+            class="tab"
+            [class.active]="mode() === 'register'"
+            (click)="setMode('register')"
+          >
+            Register
+          </button>
+          <button
+            type="button"
+            class="tab"
+            [class.active]="mode() === 'login'"
+            (click)="setMode('login')"
+          >
+            Login
+          </button>
         </div>
 
         <!-- form -->
         <form (submit)="submit($event)">
+          @if (mode() === 'register') {
+            <label for="name">Name</label>
+            <input id="name" type="text" class="field" [value]="name()" (input)="onName($event)" />
+          }
 
           <label for="email">Email</label>
-          <input id="email" type="email" class="field" [value]="email()" (input)="onEmail($event)">
+          <input
+            id="email"
+            type="email"
+            class="field"
+            [value]="email()"
+            (input)="onEmail($event)"
+          />
 
           <label for="password">Password</label>
-          <input id="password" type="password" class="field" [value]="password()" (input)="onPassword($event)">
+          <input
+            id="password"
+            type="password"
+            class="field"
+            [value]="password()"
+            (input)="onPassword($event)"
+          />
 
           <div class="row">
             <label class="remember">
-              <input type="checkbox" [checked]="remember()" (change)="onRemember($event)">
+              <input type="checkbox" [checked]="remember()" (change)="onRemember($event)" />
               <span>Remember Me</span>
             </label>
 
@@ -51,27 +75,23 @@
             <p class="error">{{ error() }}</p>
           }
 
-          <button type="submit" class="main-btn">
-            {{ mode() === 'register' ? 'Register' : 'Login' }}
+          <button type="submit" class="main-btn" [disabled]="busy()">
+            {{ busy() ? 'Please wait...' : mode() === 'register' ? 'Register' : 'Login' }}
           </button>
-
         </form>
 
         <p class="or">Or</p>
 
-        <button type="button" class="guest-btn" (click)="continueAsGuest()">Continue as guest</button>
-
+        <button type="button" class="guest-btn" (click)="continueAsGuest()">
+          Continue as guest
+        </button>
       </div>
-
     </section>
-
   </main>
-
 
   <!-- ================= FOOTER ================= -->
   <footer class="footer">
     <p>Facebook: Mr Hungry</p>
     <p>2nd floor Aniles street argy Kanluran Calauan, Calauan, Philippines, 4012</p>
   </footer>
-
 </div>

@@ -15,10 +15,17 @@
       <button class="profile" (click)="toggleProfile()" aria-label="Profile">👤 {{ user()?.name ?? 'Guest' }}</button>
       @if (profileOpen()) {
         <div class="profile-card">
-          @if (user(); as u) {
+        @if (user(); as u) {
             <p class="p-name">{{ u.name }}</p>
             <p>{{ u.email }}</p>
             <p>{{ u.points }} points</p>
+            <a class="pop-btn" routerLink="/account">My account</a>
+            @if (u.role === 'admin') {
+              <a class="pop-btn" routerLink="/admin">Admin dashboard</a>
+            }
+            @if (u.role === 'cashier') {
+              <a class="pop-btn" routerLink="/cashier">Cashier dashboard</a>
+            }
             <button type="button" class="pop-btn" (click)="logout()">Log out</button>
           } @else {
             <p class="p-name">Guest</p>

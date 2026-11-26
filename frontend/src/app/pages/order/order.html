@@ -1,20 +1,32 @@
 <div class="page">
-
   <!-- brand -->
   <header class="brand">
     <a class="brand-link" routerLink="/">
-      <img class="logo-img" src="/logo.png" alt="Mr. Hungry logo">
+      <img class="logo-img" src="/logo.png" alt="Mr. Hungry logo" />
       <p>Mr.Hungry</p>
     </a>
   </header>
 
   <!-- orange bar -->
   <div class="orange-bar">
-    <button type="button" class="menu-btn" (click)="toggleNav()"
-            [attr.aria-expanded]="navOpen()" aria-label="Toggle menu">&#9776;</button>
+    <button
+      type="button"
+      class="menu-btn"
+      (click)="toggleNav()"
+      [attr.aria-expanded]="navOpen()"
+      aria-label="Toggle menu"
+    >
+      &#9776;
+    </button>
 
-    <input type="text" class="search" placeholder="Type here" aria-label="Search the menu"
-           [value]="search()" (input)="onSearch($event)">
+    <input
+      type="text"
+      class="search"
+      placeholder="Type here"
+      aria-label="Search the menu"
+      [value]="search()"
+      (input)="onSearch($event)"
+    />
 
     <div class="profile-wrap">
       <button type="button" class="profile" (click)="toggleProfile()" aria-label="Profile">
@@ -27,6 +39,13 @@
             <p class="p-name">{{ user.name }}</p>
             <p>{{ user.email }}</p>
             <p>{{ user.points }} points</p>
+            <a class="pop-btn" routerLink="/account">My account</a>
+            @if (user.role === 'admin') {
+              <a class="pop-btn" routerLink="/admin">Admin dashboard</a>
+            }
+            @if (user.role === 'cashier') {
+              <a class="pop-btn" routerLink="/cashier">Cashier dashboard</a>
+            }
             <button type="button" class="pop-btn" (click)="logout()">Log out</button>
           } @else {
             <p>You are ordering as a guest. Register to earn points.</p>
@@ -37,8 +56,12 @@
     </div>
 
     <div class="cart-wrap">
-      <button type="button" class="cart" (click)="toggleCart()"
-              [attr.aria-label]="'Open cart, ' + cart.count() + ' items'">
+      <button
+        type="button"
+        class="cart"
+        (click)="toggleCart()"
+        [attr.aria-label]="'Open cart, ' + cart.count() + ' items'"
+      >
         {{ cart.count() }} &#128722;
       </button>
 
@@ -68,9 +91,12 @@
   <nav class="nav" [class.expanded]="navOpen()">
     <div class="nav-items">
       @for (link of links; track link.path) {
-        <button type="button" class="nav-item"
-                [class.hidden]="!navOpen() && link.path !== selected()"
-                (click)="pick(link.path)">
+        <button
+          type="button"
+          class="nav-item"
+          [class.hidden]="!navOpen() && link.path !== selected()"
+          (click)="pick(link.path)"
+        >
           @if (!navOpen() && link.path === selected()) {
             <span class="play">&#9654;</span>
           }
@@ -83,8 +109,15 @@
       }
     </div>
 
-    <button type="button" class="nav-close" [class.invisible]="navOpen()"
-            (click)="expandNav()" aria-label="Show all links">&#10005;</button>
+    <button
+      type="button"
+      class="nav-close"
+      [class.invisible]="navOpen()"
+      (click)="expandNav()"
+      aria-label="Show all links"
+    >
+      &#10005;
+    </button>
   </nav>
 
   <!-- your order -->
@@ -96,7 +129,7 @@
         <article class="line">
           <div class="line-photo">
             @if (line.item.image_url) {
-              <img [src]="line.item.image_url" [alt]="line.item.name">
+              <img [src]="line.item.image_url" [alt]="line.item.name" />
             } @else {
               <div class="initial">{{ line.item.name[0] }}</div>
             }
@@ -110,24 +143,55 @@
           </div>
 
           <div class="stepper">
-            <button type="button" (click)="removeItem(line.item)"
-                    [attr.aria-label]="'Remove one ' + line.item.name">&minus;</button>
+            <button
+              type="button"
+              (click)="removeItem(line.item)"
+              [attr.aria-label]="'Remove one ' + line.item.name"
+            >
+              &minus;
+            </button>
             <b>{{ line.qty }}</b>
-            <button type="button" (click)="addItem(line.item)"
-                    [attr.aria-label]="'Add one more ' + line.item.name">+</button>
+            <button
+              type="button"
+              (click)="addItem(line.item)"
+              [attr.aria-label]="'Add one more ' + line.item.name"
+            >
+              +
+            </button>
           </div>
         </article>
       } @empty {
-        <p class="note">Your cart is empty. <a routerLink="/menu">Pick something from the menu.</a></p>
+        <p class="note">
+          Your cart is empty. <a routerLink="/menu">Pick something from the menu.</a>
+        </p>
       }
     </div>
 
     @if (cart.count() > 0) {
+      @if (vouchers().length > 0) {
+        <div class="voucher-box">
+          <label for="voucher">Use a voucher</label>
+          <select id="voucher" (change)="onVoucher($event)">
+            <option value="">No voucher</option>
+            @for (v of vouchers(); track v.user_voucher_id) {
+              <option [value]="v.user_voucher_id" [selected]="v.user_voucher_id === voucherId()">
+                {{ v.title }}
+              </option>
+            }
+          </select>
+        </div>
+      }
       <div class="summary">
         <h2>Order Summary</h2>
-        <div class="sum-row"><span>Subtotal</span><span>&#8369;{{ subtotal() }}</span></div>
-        <div class="sum-row"><span>Reward Discount</span><span>&minus;&#8369;{{ rewardDiscount() }}</span></div>
-        <div class="sum-row sum-total"><span>Total at Counter</span><span>&#8369;{{ total() }}</span></div>
+        <div class="sum-row">
+          <span>Subtotal</span><span>&#8369;{{ subtotal() }}</span>
+        </div>
+        <div class="sum-row">
+          <span>Reward Discount</span><span>&minus;&#8369;{{ rewardDiscount() }}</span>
+        </div>
+        <div class="sum-row sum-total">
+          <span>Total at Counter</span><span>&#8369;{{ total() }}</span>
+        </div>
       </div>
 
       <div class="points">
@@ -138,10 +202,12 @@
         }
       </div>
 
+      @if (error()) {
+        <p class="note err">{{ error() }}</p>
+      }
       <button type="button" class="place-btn" [disabled]="placing()" (click)="placeOrder()">
         Place Order And Get QR Code
       </button>
     }
   </section>
-
 </div>

@@ -1,4 +1,6 @@
-﻿export interface MenuItem {
+﻿export type Role = 'user' | 'cashier' | 'admin';
+
+export interface MenuItem {
   item_id: number;
   name: string;
   price: number;
@@ -8,8 +10,10 @@
 }
 
 export interface User {
+  user_id: number;
   name: string;
   email: string;
+  role: Role;
   points: number;
 }
 

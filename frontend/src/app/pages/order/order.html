@@ -124,6 +124,15 @@
   <section class="order">
     <h1>Your Order</h1>
 
+      @if (auth.user(); as u) {
+      @if (u.role !== 'user') {
+        <p class="test-banner">
+          <b>Test order only.</b> You are logged in as {{ u.role }}. Orders placed from staff accounts
+          are recorded as Guest and do not earn points or use vouchers.
+        </p>
+      }
+    }
+
     <div class="lines">
       @for (line of cart.lines(); track line.item.item_id) {
         <article class="line">

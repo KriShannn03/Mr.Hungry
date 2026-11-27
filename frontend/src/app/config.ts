@@ -1,5 +1,5 @@
 const isLocal = ['localhost', '127.0.0.1'].includes(location.hostname);
-export const API_ORIGIN = isLocal ? 'http://localhost:3000' : 'https://YOUR-BACKEND-NAME.vercel.app';
+export const API_ORIGIN = isLocal ? 'http://localhost:3000' : 'https://mr-hungry-api.vercel.app';
 export const API_URL = `${API_ORIGIN}/api`;
 
 // keep this the same number as PESOS_PER_POINT in backend/.env

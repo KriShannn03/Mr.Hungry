@@ -42,7 +42,7 @@ export class Dashboard implements OnInit {
     },
     {
       title: 'Place the order and get your QR code',
-      text: 'Your order is saved as Pending and you get a one-time QR code. It expires after 30 minutes.',
+      text: 'Your order is saved as Pending and you get a one-time QR code. It expires after 1 hour.',
     },
     {
       title: 'Scan, pay, and earn points',

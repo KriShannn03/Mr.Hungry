@@ -9,6 +9,8 @@ const pool = mysql.createPool({
   database: cfg.db.name,
   waitForConnections: true,
   connectionLimit: 5,
+  enableKeepAlive: true,
+  idleTimeout: 30000,
   timezone: "Z", // dates are stored and sent as UTC
   decimalNumbers: true, // prices come back as numbers, not strings
   ssl: cfg.db.ssl

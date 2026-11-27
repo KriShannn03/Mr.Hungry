@@ -6,6 +6,7 @@ const { pool } = require('./db');
 const { cleanupOrders } = require('./utils/orders');
 
 const app = express();
+app.set('trust proxy', 1); // Vercel sits in front of the app; without this, rate limiting treats everyone as one persons
 
 app.use(cors({ origin: cfg.corsOrigins }));
 app.use(express.json());
@@ -35,7 +36,7 @@ app.use((req, res) => res.status(404).json({ message: 'Not found.' }));
 // one place that turns any error into a clean JSON message
 app.use((err, req, res, next) => {
   if (err instanceof multer.MulterError) {
-    return res.status(400).json({ message: err.code === 'LIMIT_FILE_SIZE' ? 'That image is too large (max 5 MB).' : err.message });
+    return res.status(400).json({ message: err.code === 'LIMIT_FILE_SIZE' ? 'That image is too large (max 4 MB).' : err.message });
   }
   if (err.code === 'ER_DUP_ENTRY') return res.status(409).json({ message: 'That already exists.' });
 

@@ -657,8 +657,8 @@ export class Admin implements OnInit {
   }
   onFile(e: Event) {
     const f = (e.target as HTMLInputElement).files?.[0] ?? null;
-    if (f && f.size > 5 * 1024 * 1024) {
-      this.fail('That image is too large (max 5 MB).');
+    if (f && f.size > 4 * 1024 * 1024) {
+      this.fail('That image is too large (max 4 MB).');
       (e.target as HTMLInputElement).value = '';
       return;
     }

@@ -14,7 +14,7 @@ router.use(requireRole('admin'));
 // ---------- photos ----------
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 5 * 1024 * 1024 },
+  limits: { fileSize: 4 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     if (/^image\/(jpeg|png|webp|gif)$/.test(file.mimetype)) return cb(null, true);
     cb(httpError(400, 'Only JPG, PNG, WEBP or GIF images are allowed.'));

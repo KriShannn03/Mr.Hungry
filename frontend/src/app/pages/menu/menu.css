@@ -325,3 +325,14 @@
     .product:hover .item-desc,
     .product:focus-within .item-desc { opacity: 1; transform: none; }
 }
+
+/* keep every card the same height and pin the Add button to the bottom */
+.product { display: flex; flex-direction: column; }
+.info { flex: 1; }
+
+@media (min-width: 768px) {
+    .add-btn, .stepper { align-self: flex-end; }
+}
+@media (max-width: 767px) {
+    .info > div:first-child { flex: 1; }
+}

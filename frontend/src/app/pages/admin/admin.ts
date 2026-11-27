@@ -405,8 +405,7 @@ const blankVoucher = () => ({
             <div class="grid2">
               <label>Name <input class="inp" [(ngModel)]="staff.name" /></label>
               <label>Email <input class="inp" type="email" [(ngModel)]="staff.email" /></label>
-              <label
-                >Password (8+ characters, letters and numbers)
+             <label>Password
                 <app-password-field [(value)]="staff.password" autocomplete="new-password" />
               </label>
               <label
@@ -825,7 +824,7 @@ export class Admin implements OnInit {
     });
   }
   resetPassword(u: UserRow) {
-    const pw = prompt(`New password for ${u.name} (8+ characters, letters and numbers):`);
+    const pw = prompt(`New password for ${u.name}:`);
     if (!pw) return;
     this.api.updateUser(u.user_id, { new_password: pw }).subscribe({
       next: () => this.ok('Password changed.'),

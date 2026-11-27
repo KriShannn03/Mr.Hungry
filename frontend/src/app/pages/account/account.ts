@@ -29,8 +29,7 @@ import { PasswordField } from '../../components/password-field/password-field';
             >Current password
             <app-password-field [(value)]="f.current_password" autocomplete="current-password" />
           </label>
-          <label
-            >New password (8+ characters, letters and numbers)
+          <label>New password
             <app-password-field [(value)]="f.new_password" autocomplete="new-password" />
           </label>
 

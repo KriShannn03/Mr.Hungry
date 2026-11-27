@@ -3,7 +3,7 @@ export const API_ORIGIN = isLocal ? 'http://localhost:3000' : 'https://mr-hungry
 export const API_URL = `${API_ORIGIN}/api`;
 
 // keep this the same number as PESOS_PER_POINT in backend/.env
-export const PESOS_PER_POINT = 10;
+export const PESOS_PER_POINT = 50;
 
 // the server returns image paths like /api/menu/5/image?v=1
 export const imageUrl = (path?: string | null) =>

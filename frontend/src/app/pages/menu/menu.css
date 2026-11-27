@@ -150,9 +150,9 @@
 .nav-close {
     width: 30px;
     height: 30px; flex: none;
-    border-radius: 50%; 
+    border-radius: 50%;
     border: 2px solid #fbe9c6;
-    background: transparent; color: #fbe9c6; 
+    background: transparent; color: #fbe9c6;
     font-size: 14px; cursor: pointer;
     transition: opacity 0.3s;
 }
@@ -161,9 +161,9 @@
 /* ---------- categories ---------- */
 .categories { padding: 18px 32px 0; }
 .categories h1 {
-    margin: 0 0 14px; 
-    color: white; 
-    font-weight: 900; 
+    margin: 0 0 14px;
+    color: white;
+    font-weight: 900;
     font-size: 64px;
     text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.35), 0 0 12px rgba(0, 0, 0, 0.25);
 }
@@ -181,10 +181,10 @@
 /* ---------- products ---------- */
 .products { padding: 22px 32px 90px; }
 .grid {
-    display: grid; 
+    display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 32px 60px; 
-    max-width: 1000px; 
+    gap: 32px 60px;
+    max-width: 1000px;
     margin: 0 auto;
 }
 .product {
@@ -196,35 +196,35 @@
     display: block; width: 100%; aspect-ratio: 17 / 10; object-fit: cover; border-radius: 14px;
 }
 .photo .initial {
-    display: grid; 
+    display: grid;
     place-items: center;
-    background: 
+    background:
     linear-gradient(135deg, #e8650c, #b5471f);
     color: white; font-weight: 900; font-size: 48px;
 }
 .tag {
-    position: absolute; top: 8px; left: 8px; 
+    position: absolute; top: 8px; left: 8px;
     padding: 3px 10px; border-radius: 999px;
-    background: #e8650c; 
+    background: #e8650c;
     color: white; font-size: 11px; font-weight: 800;
 }
 .info {
     display: flex;
-    align-items: center; 
-    justify-content: space-between; 
-    gap: 8px; 
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
     margin-top: 10px; }
 .name {
-    margin: 0; 
-    font-weight: 800; 
-    font-size: 13px; 
-    text-transform: uppercase; 
-    letter-spacing: 0.5px; 
+    margin: 0;
+    font-weight: 800;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .price {
-    margin: 2px 0 0; 
-    font-size: 15px; 
+    margin: 2px 0 0;
+    font-size: 15px;
 }
 .add-btn {
     border: none; border-radius: 999px; padding: 8px 26px; background: #35c238;
@@ -299,4 +299,29 @@
     .stepper { justify-content: center; padding: 2px; font-size: 10px; }
     .stepper button { width: 18px; height: 18px; }
     .cart-bar { padding: 10px 14px; font-size: 12px; }
+}
+
+/* hover pop: PC only (mouse + wide screen). Phones never see this. */
+.item-desc { display: none; }
+
+@media (hover: hover) and (min-width: 1024px) {
+    .product { transition: transform 0.22s ease, box-shadow 0.22s ease; }
+    .product:hover,
+    .product:focus-within {
+        position: relative; z-index: 3;
+        transform: translateY(-6px) scale(1.03);
+        box-shadow: -5px 6px 0 #111, 0 16px 28px rgba(0, 0, 0, 0.25);
+    }
+    .item-desc {
+        display: flex; align-items: flex-end;
+        position: absolute; inset: 0; z-index: 2; overflow: hidden;
+        padding: 12px 14px; border-radius: 14px;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.88), rgba(0, 0, 0, 0.5) 65%, rgba(0, 0, 0, 0.15));
+        color: white; font-size: 12px; line-height: 1.4; font-weight: 600;
+        opacity: 0; transform: translateY(8px);
+        transition: opacity 0.22s ease, transform 0.22s ease;
+        pointer-events: none;
+    }
+    .product:hover .item-desc,
+    .product:focus-within .item-desc { opacity: 1; transform: none; }
 }

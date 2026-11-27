@@ -7,3 +7,6 @@ export const PESOS_PER_POINT = 10;
 // the server returns image paths like /api/menu/5/image?v=1
 export const imageUrl = (path?: string | null) =>
   path ? (path.startsWith('http') ? path : API_ORIGIN + path) : null;
+
+// at least 8 characters, with at least one letter and one number
+export const isStrongPassword = (p: string) => /^(?=.*[A-Za-z])(?=.*\d).{8,}$/.test(p);

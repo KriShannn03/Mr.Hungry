@@ -30,6 +30,7 @@ CREATE TABLE
         item_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         category_id INT UNSIGNED NOT NULL,
         name VARCHAR(120) NOT NULL,
+        description VARCHAR(200) NULL,
         price DECIMAL(10, 2) NOT NULL,
         is_best_seller TINYINT (1) NOT NULL DEFAULT 0,
         is_available TINYINT (1) NOT NULL DEFAULT 1, -- 0 = hidden from the public menu

@@ -15,17 +15,17 @@ export class Dashboard implements OnInit {
   private auth = inject(AuthService);
   cart = inject(CartService);
 
-  user = this.auth.user;           
+  user = this.auth.user;
   isLoggedIn = this.auth.isLoggedIn;
-  cartCount = this.cart.count;      
+  cartCount = this.cart.count;
   search = this.menuService.search;
 
-  
+
   menuOpen = signal(typeof window !== 'undefined' && window.innerWidth >= 768);
   profileOpen = signal(false);
   cartOpen = signal(false);
 
-  
+
   bestSellers = signal<MenuItem[]>([]);
   mustTry = signal<MenuItem[]>([]);
   loading = signal(true);
@@ -52,6 +52,7 @@ export class Dashboard implements OnInit {
 
   contact = {
     facebook: 'Mr Hungry',
+    facebookUrl: 'https://www.facebook.com/people/MR-HUNGRY-KITCHEN/61570721825309/',
     email: 'add your email here',
     address: 'add your address here',
     phone: 'add your number here',

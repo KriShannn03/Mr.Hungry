@@ -1,4 +1,6 @@
-﻿import { Component, inject, signal } from '@angular/core';
+﻿import { isStrongPassword } from '../../config';
+import { PasswordField } from '../../components/password-field/password-field';
+import { Component, inject, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services';
@@ -15,7 +17,7 @@ function savedEmail(): string {
 
 @Component({
   selector: 'app-login',
-  imports: [],
+  imports: [PasswordField],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
@@ -44,10 +46,6 @@ export class Login {
     this.email.set((event.target as HTMLInputElement).value);
   }
 
-  onPassword(event: Event) {
-    this.password.set((event.target as HTMLInputElement).value);
-  }
-
   onRemember(event: Event) {
     this.remember.set((event.target as HTMLInputElement).checked);
   }
@@ -65,8 +63,13 @@ export class Login {
       return;
     }
 
-    if (this.password().length < 6) {
-      this.error.set('Password must be at least 6 characters.');
+        if (this.mode() === 'register' && !isStrongPassword(this.password())) {
+      this.error.set('Password must be at least 8 characters and include both letters and numbers.');
+      return;
+    }
+
+    if (this.mode() === 'login' && !this.password()) {
+      this.error.set('Enter your password.');
       return;
     }
 

@@ -71,3 +71,4 @@ td { padding: 10px; border-top: 1px solid #f0e4cf; vertical-align: top; }
 .t-row.total { border-top: 2px dashed #111; margin-top: 8px; padding-top: 12px; font-weight: 900; font-size: 22px; }
 .who-box { background: #fdf1ea; border-radius: 10px; padding: 10px 14px; font-size: 14px; margin-bottom: 10px; }
 .big-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+app-password-field { --field-border: 2px solid #e5d3b3; --field-bg: #fffaf0; --field-radius: 10px; }

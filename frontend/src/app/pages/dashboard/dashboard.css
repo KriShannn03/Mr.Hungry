@@ -785,3 +785,29 @@
         font-size: 10px;
     }
 }
+.footer a { color: inherit; text-decoration: underline; }
+.footer a:hover { color: #e8650c; }
+.media { position: relative; }
+.item-desc { display: none; }
+
+@media (hover: hover) and (min-width: 1024px) {
+    .card { transition: transform 0.22s ease, box-shadow 0.22s ease; }
+    .card:hover,
+    .card:focus-within {
+        position: relative; z-index: 3;
+        transform: translateY(-6px) scale(1.03);
+        box-shadow: 5px 8px 0 rgba(0, 0, 0, 0.5), 0 16px 28px rgba(0, 0, 0, 0.25);
+    }
+    .item-desc {
+        display: flex; align-items: flex-end;
+        position: absolute; inset: 0; z-index: 2; overflow: hidden;
+        padding: 12px 14px; border-radius: 8px;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.88), rgba(0, 0, 0, 0.5) 65%, rgba(0, 0, 0, 0.15));
+        color: white; font-size: 13px; line-height: 1.4; font-weight: 600;
+        opacity: 0; transform: translateY(8px);
+        transition: opacity 0.22s ease, transform 0.22s ease;
+        pointer-events: none;
+    }
+    .card:hover .item-desc,
+    .card:focus-within .item-desc { opacity: 1; transform: none; }
+}

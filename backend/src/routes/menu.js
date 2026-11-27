@@ -5,7 +5,7 @@ const { toDto } = require('../utils/menu');
 // public menu (hidden items are not included)
 router.get('/', async (req, res) => {
   const [rows] = await pool.query(
-    `SELECT m.item_id, m.name, m.price, c.name AS category, m.is_best_seller, m.has_image, m.image_version
+    `SELECT m.item_id, m.name, m.description, m.price, c.name AS category, m.is_best_seller, m.has_image, m.image_version
      FROM menu_items m
      JOIN categories c ON c.category_id = m.category_id
      WHERE m.is_available = 1

@@ -54,21 +54,20 @@
           />
 
           <label for="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            class="field"
-            [value]="password()"
-            (input)="onPassword($event)"
+          <app-password-field
+            inputId="password"
+            [(value)]="password"
+            [autocomplete]="mode() === 'register' ? 'new-password' : 'current-password'"
           />
+          @if (mode() === 'register') {
+            <p class="hint">At least 8 characters, with letters and numbers.</p>
+          }
 
           <div class="row">
             <label class="remember">
               <input type="checkbox" [checked]="remember()" (change)="onRemember($event)" />
               <span>Remember Me</span>
             </label>
-
-            <a class="forgot" href="#">Forget Password?</a>
           </div>
 
           @if (error()) {
@@ -91,7 +90,15 @@
 
   <!-- ================= FOOTER ================= -->
   <footer class="footer">
-    <p>Facebook: Mr Hungry</p>
-    <p>2nd floor Aniles street argy Kanluran Calauan, Calauan, Philippines, 4012</p>
+    <p>
+      Facebook:
+      <a
+        href="https://www.facebook.com/people/MR-HUNGRY-KITCHEN/61570721825309/"
+        target="_blank"
+        rel="noopener noreferrer"
+        >Mr Hungry</a
+      >
+    </p>
+    <p>2nd Floor Alvela Street, Brgy. Kanluran, Calauan, Philippines, 4012</p>
   </footer>
 </div>

@@ -189,18 +189,6 @@ label.remember {
     accent-color: #1e7a34;
 }
 
-.forgot {
-    color: #111;
-    text-decoration: none;
-    font-family: 'Krona One', sans-serif;
-    font-size: 11px;
-    white-space: nowrap;
-}
-
-.forgot:hover {
-    text-decoration: underline;
-}
-
 .error {
     margin: 0 0 10px;
     color: #b3261e;
@@ -318,3 +306,7 @@ label.remember {
         font-size: 220px;
     }
 }
+
+.footer a { color: inherit; text-decoration: underline; }
+.footer a:hover { color: #e8650c; }
+.hint { margin: 4px 0 0; font-size: 11px; opacity: 0.8; }

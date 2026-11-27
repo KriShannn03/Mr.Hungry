@@ -8,6 +8,7 @@ import { PlacedLine } from './order';
 export interface AdminItem {
   item_id: number;
   name: string;
+  description: string | null;
   price: number;
   category_id: number;
   category: string;
@@ -114,8 +115,11 @@ export class StaffApi {
   adminOrders(params: Params) {
     return this.http.get<OrderPage>(`${this.admin}/orders`, { params });
   }
-  users(role: string) {
-    return this.http.get<UserRow[]>(`${this.admin}/users`, { params: role ? { role } : {} });
+  users(role: string, q = '') {
+    const params: Record<string, string> = {};
+    if (role) params['role'] = role;
+    if (q) params['q'] = q;
+    return this.http.get<UserRow[]>(`${this.admin}/users`, { params });
   }
   createUser(body: object) {
     return this.http.post(`${this.admin}/users`, body);

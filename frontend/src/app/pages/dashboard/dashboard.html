@@ -1,21 +1,36 @@
 ﻿<div class="page">
-
   <header class="brand">
     <img class="logo-img" src="/logo.png" alt="Mr. Hungry logo" />
     <p>Mr. Hungry</p>
   </header>
 
   <!-- top bar -->
-    <div class="orange-bar">
-    <button class="menu-btn" (click)="toggleMenu()" [attr.aria-expanded]="menuOpen()" aria-label="Toggle menu">☰</button>
-    <input type="text" class="search" placeholder="Search the menu" aria-label="Search the menu"
-           [value]="search()" (input)="onSearch($event)" (keydown.enter)="goSearch()" />
+  <div class="orange-bar">
+    <button
+      class="menu-btn"
+      (click)="toggleMenu()"
+      [attr.aria-expanded]="menuOpen()"
+      aria-label="Toggle menu"
+    >
+      ☰
+    </button>
+    <input
+      type="text"
+      class="search"
+      placeholder="Search the menu"
+      aria-label="Search the menu"
+      [value]="search()"
+      (input)="onSearch($event)"
+      (keydown.enter)="goSearch()"
+    />
 
     <div class="profile-btn">
-      <button class="profile" (click)="toggleProfile()" aria-label="Profile">👤 {{ user()?.name ?? 'Guest' }}</button>
+      <button class="profile" (click)="toggleProfile()" aria-label="Profile">
+        👤 {{ user()?.name ?? 'Guest' }}
+      </button>
       @if (profileOpen()) {
         <div class="profile-card">
-        @if (user(); as u) {
+          @if (user(); as u) {
             <p class="p-name">{{ u.name }}</p>
             <p>{{ u.email }}</p>
             <p>{{ u.points }} points</p>
@@ -65,7 +80,7 @@
   </div>
 
   <!-- nav -->
-    <nav class="nav" [class.open]="menuOpen()">
+  <nav class="nav" [class.open]="menuOpen()">
     <a routerLink="/menu">Menu</a>
     <a routerLink="/order">Order</a>
     <a routerLink="/rewards">Rewards</a>
@@ -81,106 +96,118 @@
     <h1>Satisfy<br />Every<br />Craving</h1>
   </section>
 
- <!-- food sections -->
-<section class="foods">
+  <!-- food sections -->
+  <section class="foods">
+    <h2>Best Sellers</h2>
+    <div class="food-grid">
+      @if (loading() || error()) {
+        @for (n of [1, 2, 3]; track n) {
+          <div class="card">
+            <div class="skeleton-img"></div>
+            <p class="name placeholder">.....</p>
+            <p class="price placeholder">₱.....</p>
+            <div class="btn-space"></div>
+          </div>
+        }
+      } @else {
+        @for (item of bestSellers(); track item.item_id) {
+          <div class="card">
+              <div class="media">
+            @if (item.image_url) {
+              <img [src]="item.image_url" [alt]="item.name">
+            } @else {
+              <div class="initial">{{ item.name[0] }}</div>
+            }
+            @if (item.description) {
+              <div class="item-desc">{{ item.description }}</div>
+            }
+          </div>
+            <p class="name">{{ item.name }}</p>
+            <p class="price">₱{{ item.price }}</p>
 
-  <h2>Best Sellers</h2>
-  <div class="food-grid">
-    @if (loading() || error()) {
-      @for (n of [1, 2, 3]; track n) {
-        <div class="card">
-          <div class="skeleton-img"></div>
-          <p class="name placeholder">.....</p>
-          <p class="price placeholder">₱.....</p>
-          <div class="btn-space"></div>
-        </div>
+            @if (quantityOf(item.item_id) === 0) {
+              <button type="button" class="add-btn" (click)="addItem(item)">Add</button>
+            } @else {
+              <div class="stepper">
+                <button type="button" (click)="removeItem(item)">−</button>
+                <b>{{ quantityOf(item.item_id) }}</b>
+                <button type="button" (click)="addItem(item)">+</button>
+              </div>
+            }
+          </div>
+        }
       }
-    } @else {
-      @for (item of bestSellers(); track item.item_id) {
-        <div class="card">
-          @if (item.image_url) {
-            <img [src]="item.image_url" [alt]="item.name">
-          } @else {
-            <div class="initial">{{ item.name[0] }}</div>
-          }
-          <p class="name">{{ item.name }}</p>
-          <p class="price">₱{{ item.price }}</p>
+    </div>
 
-          @if (quantityOf(item.item_id) === 0) {
-            <button type="button" class="add-btn" (click)="addItem(item)">Add</button>
-          } @else {
-            <div class="stepper">
-              <button type="button" (click)="removeItem(item)">−</button>
-              <b>{{ quantityOf(item.item_id) }}</b>
-              <button type="button" (click)="addItem(item)">+</button>
-            </div>
-          }
-        </div>
-      }
-    }
-  </div>
+    <h2>Must Try</h2>
+    <div class="food-grid">
+      @if (loading() || error()) {
+        @for (n of [1, 2, 3]; track n) {
+          <div class="card">
+            <div class="skeleton-img"></div>
+            <p class="name placeholder">.....</p>
+            <p class="price placeholder">₱.....</p>
+            <div class="btn-space"></div>
+          </div>
+        }
+      } @else {
+        @for (item of mustTry(); track item.item_id) {
+          <div class="card">
+             <div class="media">
+            @if (item.image_url) {
+              <img [src]="item.image_url" [alt]="item.name">
+            } @else {
+              <div class="initial">{{ item.name[0] }}</div>
+            }
+            @if (item.description) {
+              <div class="item-desc">{{ item.description }}</div>
+            }
+          </div>
+            <p class="name">{{ item.name }}</p>
+            <p class="price">₱{{ item.price }}</p>
 
-  <h2>Must Try</h2>
-  <div class="food-grid">
-    @if (loading() || error()) {
-      @for (n of [1, 2, 3]; track n) {
-        <div class="card">
-          <div class="skeleton-img"></div>
-          <p class="name placeholder">.....</p>
-          <p class="price placeholder">₱.....</p>
-          <div class="btn-space"></div>
-        </div>
+            @if (quantityOf(item.item_id) === 0) {
+              <button type="button" class="add-btn" (click)="addItem(item)">Add</button>
+            } @else {
+              <div class="stepper">
+                <button type="button" (click)="removeItem(item)">−</button>
+                <b>{{ quantityOf(item.item_id) }}</b>
+                <button type="button" (click)="addItem(item)">+</button>
+              </div>
+            }
+          </div>
+        }
       }
-    } @else {
-      @for (item of mustTry(); track item.item_id) {
-        <div class="card">
-          @if (item.image_url) {
-            <img [src]="item.image_url" [alt]="item.name">
-          } @else {
-            <div class="initial">{{ item.name[0] }}</div>
-          }
-          <p class="name">{{ item.name }}</p>
-          <p class="price">₱{{ item.price }}</p>
-
-          @if (quantityOf(item.item_id) === 0) {
-            <button type="button" class="add-btn" (click)="addItem(item)">Add</button>
-          } @else {
-            <div class="stepper">
-              <button type="button" (click)="removeItem(item)">−</button>
-              <b>{{ quantityOf(item.item_id) }}</b>
-              <button type="button" (click)="addItem(item)">+</button>
-            </div>
-          }
-        </div>
-      }
-    }
-  </div>
-</section>
+    </div>
+  </section>
 
   <!-- how to order -->
   <section class="how">
-   <div class="how-body">
-    <h2>How To Order</h2>
-    <ol>
-      @for (step of steps; track step.title) {
-        <li>
-          <span class="num">{{ $index + 1 }}</span>
-          <div>
-            <h3>{{ step.title }}</h3>
-            <p>{{ step.text }}</p>
-          </div>
-        </li>
-      }
-    </ol>
-   </div>
+    <div class="how-body">
+      <h2>How To Order</h2>
+      <ol>
+        @for (step of steps; track step.title) {
+          <li>
+            <span class="num">{{ $index + 1 }}</span>
+            <div>
+              <h3>{{ step.title }}</h3>
+              <p>{{ step.text }}</p>
+            </div>
+          </li>
+        }
+      </ol>
+    </div>
 
-        <footer class="footer">
-      <p>Facebook: {{ contact.facebook }}</p>
+    <footer class="footer">
+      <p>
+        Facebook:
+        <a [href]="contact.facebookUrl" target="_blank" rel="noopener noreferrer">{{
+          contact.facebook
+        }}</a>
+      </p>
       <p>Email: {{ contact.email }}</p>
       <p>Address: {{ contact.address }}</p>
       <p>Phone: {{ contact.phone }}</p>
     </footer>
-
   </section>
 </div>
-

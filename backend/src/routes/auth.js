@@ -1,3 +1,4 @@
+const { validatePassword } = require('../utils/password');
 const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -25,7 +26,7 @@ router.post('/register', limiter, async (req, res) => {
 
   if (name.length < 2) throw httpError(400, 'Please enter your name.');
   if (!EMAIL.test(email)) throw httpError(400, 'Enter a valid email address.');
-  if (password.length < 6) throw httpError(400, 'Password must be at least 6 characters.');
+  validatePassword(password);
 
   const [exists] = await pool.query('SELECT 1 FROM users WHERE email = ?', [email]);
   if (exists.length) throw httpError(409, 'That email is already registered.');
@@ -63,7 +64,7 @@ router.put('/me', requireAuth, async (req, res) => {
 
   if (name.length < 2) throw httpError(400, 'Please enter your name.');
   if (!EMAIL.test(email)) throw httpError(400, 'Enter a valid email address.');
-  if (newPassword && newPassword.length < 6) throw httpError(400, 'New password must be at least 6 characters.');
+  if (newPassword) validatePassword(newPassword);
 
   // changing the email or password needs the current password (400, not 401, so the app doesn't log you out)
   if (email !== me.email || newPassword) {

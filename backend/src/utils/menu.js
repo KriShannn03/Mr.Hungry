@@ -2,6 +2,7 @@
 exports.toDto = m => ({
   item_id: m.item_id,
   name: m.name,
+  description: m.description || null,
   price: m.price,
   category: m.category,
   is_best_seller: !!m.is_best_seller,

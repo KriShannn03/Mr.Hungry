@@ -1,3 +1,4 @@
+const { validatePassword } = require('../utils/password');
 const router = require('express').Router();
 const multer = require('multer');
 const sharp = require('sharp');
@@ -28,13 +29,16 @@ const flag = v => (v === true || v === 'true' || v === '1' || v === 1 ? 1 : 0);
 
 function readItem(body = {}) {
   const name = String(body.name || '').trim();
+  const description = String(body.description || '').trim();
   const price = Number(body.price);
   const category_id = Number(body.category_id);
   if (!name) throw httpError(400, 'Item name is required.');
+  if (description.length > 200) throw httpError(400, 'Description is too long (max 200 characters).');
   if (!Number.isFinite(price) || price < 0 || price > 99999) throw httpError(400, 'Enter a valid price.');
   if (!Number.isInteger(category_id)) throw httpError(400, 'Choose a category.');
   return {
     name,
+    description: description || null,
     price: Math.round(price * 100) / 100,
     category_id,
     is_best_seller: flag(body.is_best_seller),
@@ -43,7 +47,7 @@ function readItem(body = {}) {
 }
 
 const ADMIN_ITEM = `
-  SELECT m.item_id, m.name, m.price, m.category_id, c.name AS category,
+  SELECT m.item_id, m.name, m.description, m.price, m.category_id, c.name AS category,
          m.is_best_seller, m.is_available, m.has_image, m.image_version
   FROM menu_items m JOIN categories c ON c.category_id = m.category_id`;
 
@@ -63,10 +67,10 @@ router.post('/menu', upload.single('image'), async (req, res) => {
   const img = req.file ? await processImage(req.file.buffer) : null;
 
   const id = await tx(async conn => {
-    const [r] = await conn.query(
-      `INSERT INTO menu_items (category_id, name, price, is_best_seller, is_available, has_image, image_version)
-       VALUES (?, ?, ?, ?, ?, ?, 1)`,
-      [d.category_id, d.name, d.price, d.is_best_seller, d.is_available, img ? 1 : 0]
+      const [r] = await conn.query(
+      `INSERT INTO menu_items (category_id, name, description, price, is_best_seller, is_available, has_image, image_version)
+       VALUES (?, ?, ?, ?, ?, ?, ?, 1)`,
+      [d.category_id, d.name, d.description, d.price, d.is_best_seller, d.is_available, img ? 1 : 0]
     );
     if (img) await conn.execute('INSERT INTO menu_item_images (item_id, mime_type, data) VALUES (?, ?, ?)', [r.insertId, 'image/webp', img]);
     return r.insertId;
@@ -84,9 +88,9 @@ router.put('/menu/:id', upload.single('image'), async (req, res) => {
     const [[exists]] = await conn.query('SELECT item_id FROM menu_items WHERE item_id = ?', [id]);
     if (!exists) throw httpError(404, 'Item not found.');
 
-    await conn.query(
-      'UPDATE menu_items SET category_id = ?, name = ?, price = ?, is_best_seller = ?, is_available = ? WHERE item_id = ?',
-      [d.category_id, d.name, d.price, d.is_best_seller, d.is_available, id]
+      await conn.query(
+      'UPDATE menu_items SET category_id = ?, name = ?, description = ?, price = ?, is_best_seller = ?, is_available = ? WHERE item_id = ?',
+      [d.category_id, d.name, d.description, d.price, d.is_best_seller, d.is_available, id]
     );
     if (img) {
       await conn.execute(
@@ -189,11 +193,27 @@ router.get('/orders', async (req, res) => {
 
 // ---------- accounts ----------
 router.get('/users', async (req, res) => {
-  const role = ['user', 'cashier', 'admin'].includes(req.query.role) ? req.query.role : null;
+  const where = [];
+  const args = [];
+
+  if (['user', 'cashier', 'admin'].includes(req.query.role)) {
+    where.push('role = ?');
+    args.push(req.query.role);
+  }
+
+  const q = String(req.query.q || '').trim();
+  if (q) {
+    const like = `%${q.replace(/[\\%_]/g, '\\$&')}%`;   // treat % and _ as plain characters
+    where.push('(name LIKE ? OR email LIKE ?)');
+    args.push(like, like);
+  }
+
   const [rows] = await pool.query(
     `SELECT user_id, name, email, role, points, is_active, created_at FROM users
-     ${role ? 'WHERE role = ?' : ''} ORDER BY FIELD(role, 'admin', 'cashier', 'user'), name`,
-    role ? [role] : []
+     ${where.length ? 'WHERE ' + where.join(' AND ') : ''}
+     ORDER BY FIELD(role, 'admin', 'cashier', 'user'), name
+     LIMIT 200`,
+    args
   );
   res.json(rows.map(u => ({ ...u, is_active: !!u.is_active })));
 });
@@ -207,7 +227,7 @@ router.post('/users', async (req, res) => {
   const role = b.role === 'admin' ? 'admin' : 'cashier';
   if (name.length < 2) throw httpError(400, 'Enter a name.');
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw httpError(400, 'Enter a valid email address.');
-  if (password.length < 6) throw httpError(400, 'Password must be at least 6 characters.');
+  validatePassword(password);
   const hash = await bcrypt.hash(password, 10);
   await pool.query('INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)', [name, email, hash, role]);
   res.status(201).json({ ok: true });
@@ -223,7 +243,7 @@ router.put('/users/:id', async (req, res) => {
   if (b.is_active !== undefined) { sets.push('is_active = ?'); args.push(b.is_active ? 1 : 0); }
   if (['user', 'cashier', 'admin'].includes(b.role)) { sets.push('role = ?'); args.push(b.role); }
   if (b.new_password) {
-    if (String(b.new_password).length < 6) throw httpError(400, 'Password must be at least 6 characters.');
+    validatePassword(b.new_password);
     sets.push('password_hash = ?');
     args.push(await bcrypt.hash(String(b.new_password), 10));
   }

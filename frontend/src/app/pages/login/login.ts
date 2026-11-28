@@ -2,7 +2,7 @@
 import { PasswordField } from '../../components/password-field/password-field';
 import { Component, inject, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services';
 
 const REMEMBER_KEY = 'mr-hungry-email';
@@ -17,7 +17,7 @@ function savedEmail(): string {
 
 @Component({
   selector: 'app-login',
-  imports: [PasswordField],
+  imports: [PasswordField, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })

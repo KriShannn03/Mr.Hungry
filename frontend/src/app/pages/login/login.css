@@ -310,3 +310,4 @@ label.remember {
 .footer a { color: inherit; text-decoration: underline; }
 .footer a:hover { color: #e8650c; }
 .hint { margin: 4px 0 0; font-size: 11px; opacity: 0.8; }
+.forgot { color: inherit; font-size: 12px; font-weight: 700; text-decoration: underline; }

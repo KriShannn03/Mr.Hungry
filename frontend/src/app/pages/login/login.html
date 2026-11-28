@@ -70,6 +70,10 @@
             </label>
           </div>
 
+          @if (mode() === 'login') {
+              <a class="forgot" routerLink="/forgot-password">Forgot password?</a>
+            }
+
           @if (error()) {
             <p class="error">{{ error() }}</p>
           }

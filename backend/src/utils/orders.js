@@ -116,6 +116,9 @@ async function cleanupOrders() {
      AND completed_at < UTC_TIMESTAMP() - INTERVAL ? DAY`,
     [cfg.keepCompletedDays]
   );
+
+  await pool.query('DELETE FROM password_resets WHERE expires_at < UTC_TIMESTAMP() - INTERVAL 1 DAY');
+  
   return { removed_expired_or_cancelled: a.affectedRows, removed_completed: b.affectedRows };
 }
 

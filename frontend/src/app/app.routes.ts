@@ -10,6 +10,8 @@ import { Account } from './pages/account/account';
 import { Admin } from './pages/admin/admin';
 import { Cashier } from './pages/cashier/cashier';
 import { roleGuard } from './guards/role.guard';
+import { ForgotPassword } from './pages/forgot-password/forgot-password';
+import { ResetPassword } from './pages/reset-password/reset-password';
 
 export const routes: Routes = [
   { path: '', component: Dashboard },
@@ -23,5 +25,7 @@ export const routes: Routes = [
   { path: 'account', component: Account, canActivate: [roleGuard('user', 'cashier', 'admin')] },
   { path: 'admin', component: Admin, canActivate: [roleGuard('admin')] },
   { path: 'cashier', component: Cashier, canActivate: [roleGuard('cashier', 'admin')] },
+  { path: 'forgot-password', component: ForgotPassword },
+  { path: 'reset-password', component: ResetPassword },
   { path: '**', redirectTo: '' },
 ];

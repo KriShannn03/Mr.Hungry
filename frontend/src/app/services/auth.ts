@@ -59,6 +59,14 @@ export class AuthService {
     return this.http.put<User>(`${API_URL}/auth/me`, body).pipe(tap(u => this.setUser(u)));
   }
 
+  forgotPassword(email: string) {
+    return this.http.post<{ message: string }>(`${API_URL}/auth/forgot-password`, { email });
+  }
+
+  resetPassword(token: string, password: string) {
+    return this.http.post<{ message: string }>(`${API_URL}/auth/reset-password`, { token, password });
+  }
+
   refresh() {
     this.http.get<User>(`${API_URL}/auth/me`).subscribe({
       next: u => this.setUser(u),

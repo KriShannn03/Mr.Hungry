@@ -27,4 +27,14 @@ module.exports = {
     name: process.env.DB_NAME || "mr_hungry",
     ssl: process.env.DB_SSL === "true",
   },
+
+  appUrl: (process.env.APP_URL || 'http://localhost:4200').replace(/\/$/, ''),
+  resetMinutes: num(process.env.RESET_MINUTES, 30),
+  mail: {
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port: num(process.env.SMTP_PORT, 465),
+    user: process.env.SMTP_USER || '',
+    pass: process.env.SMTP_PASS || '',
+    from: process.env.MAIL_FROM || process.env.SMTP_USER || '',
+  },
 };

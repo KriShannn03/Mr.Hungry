@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&family=Krona+One&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&family=Krona+One&display=swap');
 
 :host {
     display: block;
@@ -521,7 +521,7 @@
         margin: 20px 0;
     }
 
-    .grid {
+    .food-grid {
         gap: 22px;
         margin-bottom: 32px;
     }
@@ -688,7 +688,7 @@
         font-size: 22px;
     }
 
-    .grid {
+    .food-grid {
         gap: 8px;
         margin-bottom: 14px;
     }
@@ -811,3 +811,4 @@
     .card:hover .item-desc,
     .card:focus-within .item-desc { opacity: 1; transform: none; }
 }
+
